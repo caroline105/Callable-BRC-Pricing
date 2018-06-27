@@ -1,0 +1,436 @@
+\documentclass[a4paper,11pt,english]{book}
+\usepackage[english]{babel}
+\usepackage{listingsutf8,verbatim} %inclure du code 
+\lstloadlanguages{R}
+\usepackage[utf8]{inputenc} % Required for including letters with accents
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[dvipsnames]{xcolor}
+\usepackage{xspace}
+\usepackage{graphicx,epsfig,subfigure}
+\usepackage{ragged2e}
+\usepackage{fancyhdr}
+\fancyhead[L]{\includegraphics [width=1cm]{images/Logo_ponts_paristech}}
+\fancyhead[R]{\leftmark}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}  % Page margins
+\usepackage{eso-pic}
+\usepackage[Glenn]{fncychap}
+\usepackage{array,supertabular,amsmath,amssymb,dsfont}
+\usepackage{stmaryrd}
+\usepackage{titlesec}
+\usepackage{multicol,array}
+\usepackage{float}
+\usepackage{color}
+\usepackage[most]{tcolorbox}
+\newcommand\BackgroundPic{%
+\put(0,0){%
+\parbox[b][\paperheight]{\paperwidth}{%
+\vfill
+\centering
+\includegraphics[width=\paperwidth,height=\paperheight,%
+keepaspectratio]{background.jpg}%
+\vfill
+}}}
+\setlength\belowcaptionskip{0.3cm}
+\setlength\abovecaptionskip{0.3cm}
+\usepackage[hang,small]{caption}
+\usepackage{multirow} 
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage{textcomp,eurosym} 
+\setlength{\headheight}{36.06802pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[R]{\leftmark}
+\renewcommand{\arraystretch}{1.2} %aérer tableaux 
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\usepackage{stmaryrd} %double crochet
+\usepackage{amsthm}
+\usepackage{mathrsfs,amsmath} 
+\newtheorem{prop}{Proposition}
+\newtheorem*{theorem}{Théorème}
+\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry} % Page margins
+\usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
+\let\cleardoublepage\clearpage
+\definecolor{ballblue}{rgb}{0.13, 0.67, 0.8}
+\definecolor{orange}{RGB}{242,239,121}
+\definecolor{darkorange}{RGB}{229,186,27}
+\linespread{1.05}
+\newcommand{\Lim}[1]{\raisebox{0ex}{\scalebox{1}{$\displaystyle \lim_{#1}\;$}}}
+\usepackage{longtable}
+\usepackage{etoolbox,siunitx}
+\usepackage{tabularx}
+\newrobustcmd*{\bftabnum}{%
+  \bfseries
+  \sisetup{output-decimal-marker={\textmd{.}}}%
+}
+\usepackage{rotating}
+\usepackage{collcell}
+
+\newcommand{\setmaxnum}[1]{%
+    \gdef\maxnum{#1}%
+}
+\newcommand{\numtest}[1]{%
+    \ifdim#1pt > \maxnum pt
+        $\mathbf{#1}$%
+    \else
+        $#1$%
+    \fi%
+}
+\newcolumntype{E}{>{\collectcell\numtest}r<{\endcollectcell}}
+
+\begin{document}
+\sisetup{detect-weight=true,detect-inline-weight=math}
+
+\frontmatter
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+\begin{titlepage}
+\begin{center}
+\begin{figure}[H] 
+  %\begin{minipage}[b]{0.5\linewidth}
+    \centering
+    \includegraphics[scale=0.2]{images/Logo_ponts_paristech.png} 
+    \vspace{4ex}
+  %\end{minipage}
+\end{figure}
+% Title
+\rule{\linewidth}{0.5mm} \\[0.4cm]
+{ \LARGE \bfseries Pricing callable BRCs with Reflected Backward Stochastic Differential Equations \\
+}
+\rule{\linewidth}{0.5mm} \\[1cm]
+
+
+Caroline \textsc{OSTER}
+
+\noindent
+
+\vspace{4cm}
+
+{\today}
+\end{center}
+\end{titlepage}
+\newpage
+
+\pagestyle{empty}
+\tableofcontents
+\listoffigures
+\listoftables
+
+%--------------------------------------------------------------------------
+%	Intro
+%--------------------------------------------------------------------------
+\mainmatter
+\chapter*{Introduction}
+\addcontentsline{toc}{chapter}{Introduction}
+\vspace*{-2cm}
+
+%--------------------------------------------------------------------------
+%	Chapter 1 
+%--------------------------------------------------------------------------
+
+\pagestyle{fancy}
+
+\chapter{Description of a callable barrier reverse convertible}
+
+\section{What is a barrier reverse convertible ?}
+\label{sec:BRC-definition}
+
+\section{Adding the callability}
+
+
+%--------------------------------------------------------------------------
+%	Chapter 2 
+%--------------------------------------------------------------------------
+
+\pagestyle{fancy}
+
+\chapter{Pricing Methodology with Reflected Backward Stochastic Differential Equations}
+
+\section{Motivations}
+
+\section{Presentation of the SDE system}
+\label{sec:SDE-presentation}
+The objective is to calculate the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
+$$S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}$$
+$$Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}$$
+$\textbf{S}=(S_{t})_{t\geq0}$ is the forward component of the system. It represents the underlyings and its dimension is $d$. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is unidimensional.\\
+The process $W$ is a d-dimensional brownian motion defined on a probability space $(\Omega,\mathcal{F},\mathbb{P})$ provided with its natural filtration $(\mathcal{F)}_{t}$ and generated by $W$. 
+$T$ is the maturity of our asset.\\
+
+The function $f$ is called the driver function. It should be uniformly lipschitz, \textit{ie} there exist a constant $C$ such that :
+$$\forall (y_{1},z_{1}),(y_{2},z_{2}), |f(t,y_{1},z_{1})-f(t,y_{2},z_{2})|\leq C(|y_{1}-y_{2}|+|z_{1}-z_{2}|)$$
+
+Antonelli \cite{antonelli1993backward} proved the existence of such a solution using a fixed point theorem when the function $b$ does not depend on $(Z_{t})_{t\geq0}$ (which is our case) and under the condition $CT<1$ with $C$ the lipschitz constant of $f$. In our case, $C$ is the risk free rate (see \ref{subsec:choice-of-f}); it is small enough so that this condition is almost always verified.\\
+
+Resolving the backward equation thus consists in computing a pair of processes $(Y,Z)$. We will more especially focus on the process $(Y_{t})_{t\geq0}$ which gives the price of the option.
+
+\section{Resolution of the forward equation}
+\subsection{Model and scheme of discretization for the underlyings}
+\label{subsec:underlying-discretization}
+The model used for the diffusion of the underlyings is the Black-Scholes model. As the pricing is done under risk-neutral probability, we have for each underlying $(S^{i}_{t})_{t\geq0}$ :
+$$
+\left\{
+    \begin{array}{ll}
+        dS_{t}^{i}=rdt+\sigma_{i}dW_{t}^{i} \\
+        S_{0}^{i}=s_{0}^{i} 
+    \end{array}
+\right.
+$$
+where $r$ is the risk free rate.
+If we take a time grid $(t_{0},t_{1},..,t_{m})$, we know that the solution of that stochastic equation can be discretized as follows :
+$$
+\left\{
+    \begin{array}{ll}
+         \forall k=1,..,m,  S_{t_{k}}^{i}=S_{t_{k-1}}^{i}e^{(r-\frac{\sigma_{i}^{2}}{2})(t_{k}-t_{k-1})+\sigma_{i}W_{t_{k}}^{i}}\\
+        S_{t_{0}}^{i}=s_{0}^{i} 
+    \end{array}
+\right.
+$$
+with $W_{t_{k}}^{i} \sim \mathcal{N}(0,t_{k}-t_{k-1})$.\\
+This is the discretization we will use for the diffusion of the underlyings.
+\subsection{Taking into account the correlation}
+Moreover, the brownian motions are all correlated : $$\forall i=1,..,d,j=1,..,d, \mathbb{E}(dW_{t}^{i}dW_{t}^{j})=\rho_{ij}dt$$
+In order to take into account these correlations, we should generate the brownians with a multivariate gaussian distribution with correlation matrix $\Sigma=(\rho_{i,j})_{i=1,..,d,j=1,..,d}$.\\
+
+The first step is to generate $d$ independent realizations of a standard normal distribution in a matrix $M$. Then, we should calculate the matrix $C$ such that $CC^{T}=\Sigma$ thanks to a Cholesky decomposition. To do so, the matrix $\Sigma$ has to be definitive positive, which is not always the case. \\
+
+\begin{tcolorbox}[breakable,colback=cyan,opacityfill=0.05,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
+\begin{center}
+\vspace{0.2cm}
+\textbf{How to make a matrix $\Sigma$ definite positive ?}
+\end{center}
+\begin{enumerate}
+    \item Diagonalize the matrix $\Sigma$, \textit{ie} find $P$ an inversible matrix and $D$ a diagonal matrix such that $\Sigma=PDP^{-1}$
+    \item Let $(d_{ii})_{i=1,..,d}$ be the $i^{th}$ diagonal element of the matrix $D$. We calculate : $$\forall i=1,..,d, d_{ii}^{*}=\left\{
+    \begin{array}{ll}
+        d_{ii} \text{ if } d_{ii}>0 \\
+        10^{-12} \text{ if } d_{ii}\leq0
+    \end{array}
+\right.$$
+ \item Writing $D^{*}$ the diagonal matrix with $d_{ii}^{*}$ the diagonal elements, we can compute $$\Sigma^{*}=PD^{*}P^{-1}$$ where $\Sigma^{*}$ is the corrected definite positive matrix.
+\end{enumerate}
+\end{tcolorbox}}
+Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives a realization of a multivariate gaussian distribution whose correlation matrix is $\Sigma$.
+\subsection{Brownian bridge and final payoff computation}
+The problem of the discretization of the forward equation is that we lose the continuous monitoring of the BRC's barrier. In order to catch the continuity of the barrier without using a very high number of steps in the time grid, we decided to use brownian bridges.\\
+
+Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by :
+$$p(x,y,T,B,\sigma) = \left\{
+    \begin{array}{ll}
+        1 \text{ if } x\leq B \text{ or } y\leq B \\
+        exp(-2\frac{log(\frac{x}{B})log(\frac{y}{B})}{\sigma^{2}T}) \text{ otherwise }
+    \end{array}
+\right.$$
+The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=p(S_{t_{i}},S_{t_{i+1}},\Delta_{i},B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows :
+$$\Phi(S) = cap -(K-S_{T})_{+}(1-p)$$
+
+When it comes to several underlyings, the computation of $p$ becomes harder. As explained in \ref{sec:BRC-definition}, the barrier can be a \textit{WorstOf} or a \textit{BestOf}. This means we can have 4 cases :
+\begin{enumerate}
+    \item \textbf{The barrier is a \textit{WorstOf} and is down} : the barrier is touched if at least one of the underlying has touched the barrier, which is the complementary of the event "Not any underlying has touched the barrier". We then have $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$, where $p_{i}^{j}$ is the probability that the $j^{th}$ underlying as reached the barrier between $t_{i}$ and $t_{i+1}$.
+    
+    \item \textbf{The barrier is a \textit{WorstOf} and is up} : the barrier is touched if all the underlyings have, thus $p_{i}=\prod_{j=1}^{d}p_{i}^{j}$
+    
+    \item \textbf{The barrier is a \textit{BestOf} and is down} : this situation is the same as above, so we have $p_{i}=\prod_{j=1}^{d}p_{i}^{j}$
+    
+    \item \textbf{The barrier is a \textit{BestOf} and is up} : this situation is the same as the first one so  $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$
+\end{enumerate}
+Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not really the case. Nevertheless, this approximation is necessary to have simple formulas and take them into account in the payoff computation.
+\section{Resolution of the backward equation}
+Describe Monte Carlo resolution.
+\subsection{Choice of the function f}
+\label{subsec:choice-of-f}
+In order to find the expression of $f$ and to give more intuition about what the processus $(Z_{t})_{t\geq0}$, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose risk-free rate is $r$. The value of the portfolio should then evolve like this :
+$$dY_{t} = r(Y_{t}-a_{t}S_{t})dt + a_{t}dS_{t}$$
+$$dY_{t} = r(Y_{t}-a_{t}S_{t})dt + a_{t}(rS_{t}dt+\sigma S_{t}dW_{t})$$
+We can rewrite this :
+$$dY_{t} = rY_{t} + \sigma a_{t}S_{t}dW_{t}$$
+The processus $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
+The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
+\subsection{Resolution formula}
+Let us rewrite the backward equation at $t_{k}$ and $t_{k+1}$, two consecutive times in the time grid :
+$$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} ds$$
+$$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} ds$$
+Now let's make the difference between both :
+$$Y_{t_{k}} = Y_{t_{k+1}} + \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds - \int_{t_{k}}^{t_{k+1}}Z_{s} ds$$
+Let $(\mathcal{F}_{t})_{t\geq0}$ be a filtration so that $(Y_{t})_{t\geq0}$ and $(S_{t})_{t\geq0}$ are adapted, and let's apply $\mathbb{E}(.|\mathcal{F}_{t_{k}})$ to the previous equation :
+$$\mathbb{E}(Y_{t_{k}}|\mathcal{F}_{t_{k}}) = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \mathbb{E}(\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds|\mathcal{F}_{t_{k}}) - \mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds|\mathcal{F}_{t_{k}})$$
+
+The last term is equal to zero because $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds)$ thanks to the independence, and $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds)=0$ as being the expectation of an Ito's integral.\\
+For the deterministic term, we have $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds) = \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds$. Noting $\Delta_{k}=t_{k+1}-t_{k}$, we can approximate this integral by $\Delta_{t_{k}}f(t_{k},Y_{t_{k}})$.
+The resolution formula becomes :
+\begin{equation}
+Y_{t_{k}} = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_{k}}f(t_{k},Y_{t_{k}})
+\label{resolutionFormula}
+\end{equation}
+This has to be calculated for every step in the time grid and for every simulation of the Monte Carlo method.
+\subsection{Computation of the conditional expectation}
+\label{subsec:conditional-expectation}
+The above formula shows that we have to estimate at each step the conditional expectation $\mathbb{E}(Y_{t+1}|\mathcal{F}_{t})$. The kernel regression method has been chosen in order to do so.\\
+
+This method consists in the estimation of $\mathbb{E}(Y|X=x)$ for a given $x$. The estimator proposed by both Nadaraya\cite{nadaraya1964estimating} and Watson\cite{watson1964smooth} in 1964 is the following : $$\hat{m}_{h}(x)=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})y_{i}}{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
+with $N$ being the number of observations drawn independently.\\
+
+\begin{proof}
+The conditional expectation can be written $$\mathbb{E}(Y|X=x)=\int yf(y|x)dy = \int y\frac{f(x,y)}{f(x)}dy$$
+We can then use the kernel density estimation for $f(x,y)$ and $f(x)$ with a kernel $K_{h}$ whose bandwidth is $h$ : $$\hat{f}(x,y) = \frac{1}{N}\sum_{i=1}^{N}K_{h}(x-x_{i})K_{h}(y-y_{i})$$
+$$\hat{f}(x) = \frac{1}{N}\sum_{i=1}^{N}K_{h}(x-x_{i})$$
+
+We get $$\hat{\mathbb{E}}(Y|X=x) = \int y\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})K_{h}(y-y_{i})}{\sum_{i=1}^{N}K_{h}(x-x_{i})}dy$$
+$$=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})\int y K_{h}(y-y_{i})dy }{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
+$$=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})y_{i}}{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
+\end{proof}
+
+Note that in our case, the problem is multivariate as the BRC can have several underlyings. The kernel thus becomes : $$K_{H}(x-x_{i}) = |H|^{-\frac{1}{2}}K(H^{-\frac{1}{2}}(x-x_{i}))$$
+where $x=(x_{1},...,x_{d})^{T}$, $x_{i}=(x_{1i},...,x_{di})^{T}$, $d$ is the number of underlyings and $H$ is the bandwidth matrix, symmetric and definite positive.\\
+
+Furthermore, we chose to use the standard multivariate gaussian kernel which can be expressed as follows :
+$K_{H}(x)=\frac{1}{(2\pi)^{\frac{d}{2}}}|H|^{-\frac{1}{2}}e^{-\frac{1}{2}x^{T}H^{-1}x}$
+
+The choice of matrix $H$ appears to be crucial as it controls the smoothing of the estimation. A good choice would be the \textit{rule of thumb} proposed by Silverman\cite{silverman1986density} which consists in a diagonal matrix whose terms are : $$\forall i=1,...,d, H_{ii} = (\frac{4}{d+2})^{\frac{2}{d+4}}N^{\frac{-2}{d+4}}\sigma_{i}^{2}$$
+with $\sigma_{i}^{2}$ the variance of the $d^{th}$ variable.\\
+
+The estimator then finally becomes :
+$$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ij})^{2}}{\sigma_{j}^{2}}}}{\sum_{i=1}^{N}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ij})^{2}}{\sigma_{j}^{2}}}}$$
+\subsection{Picard's method}
+We can see from the resolution formula \eqref{resolutionFormula} that the value of $Y_{t_{k}}$ we want to compute appears on the left and right side of the equation. We will thus use a fixed-point argument to compute $Y_{t_{k}}$.
+
+\begin{prop}
+The application $\Psi : Y \rightarrow \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t}f(t_{k},Y_{t_{k}})$ is a contraction of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$ for a small $\Delta_{t_{k}}$.
+\end{prop}
+
+\begin{proof}
+Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
+$$=\Delta_{t_{k}}r |Y_{2}-Y_{1}|\leq \Delta_{t_{k}} C_{r}|Y_{2}-Y_{1}|$$
+where $C_{r}$ is a constant depending on $r$.
+\end{proof}
+Thanks to this, we can apply Picard iterations to find $Y_{t_{k}}$. The methodology is the following:
+\begin{itemize}
+    \item $i=0$ (first iteration) : $Y_{t_{k}}=0$
+    \item $i>0$ (next iterations) : $Y_{t_{k}}^{i}=\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t}) + \Delta_{t}f(t_{k},Y_{t_{k}}^{i-1})$
+\end{itemize}
+We stop the iterations when the value seems to have converged, \textit{ie} when the difference between two iterations is less than $10^{-8}$.
+\subsection{Computation at time $t=0$}
+\label{subsec:computation-0}
+At time $t=0$, the resolution formula \eqref{resolutionFormula} becomes $$Y_{t_{0}} = \mathbb{E}(Y_{t_{1}}|\mathcal{F}_{t_{0}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})=\mathbb{E}(Y_{t_{1}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})$$
+No more kernel estimation is then needed, the computation of $Y_{t_{0}}$ only requires the computation of an expectation (which is approximated by the mean of the vector $(Y_{1,i})_{i=1,..,N}$) and Picard iterations. We use the estimator :
+$$Y_{t_{0}} = \frac{1}{N}\sum_{i=1}^{N}Y_{1,i}-r\Delta_{t_{0}}Y_{t_{0}}$$
+\section{Resolution of a double reflected backward SDE}
+\subsection{Motivations}
+There are two aspects of the callable barrier reverse convertible that we can not include in the final payoff. These are the coupons ,that can be paid throughout the whole life of the asset, and the callability of the BRC that can be activated at determined times before maturity. This can introduce some discontinuity in the price of the asset, which we tried to integrate in our modelisation with reflected forward backward stochastic differential equations.
+\subsection{Description of the new problem and resolution}
+We define the following set of equations :
+$$S_{t}=S_{0} + \int_{0}^{t}b(s,S_{s})ds + \int_{0}^{t}\sigma(s,S_{s})dW_{s}$$
+$$Y_{t}=\Phi(S_{T})+\int_{t}^{T}f(s,Y_{s},Z_{s})ds+(K_{T}^{+}-K_{t}^{+})+(K_{T}^{-}-K_{t}^{-})-\int_{t}^{T}Z_{s}dW_{s}$$
+$$\forall t\leq T, L_{t}\leq Y_{t}\leq U_{t} \text{ with } \int_{0}^{T}(Y_{s}-L_{s})dK_{s}^{+}=\int_{0}^{T}(U_{s}-Y_{s})dK_{s}^{+}=0$$
+
+as a double reflected forward backward stochastic differential equation (double RFBSDE).
+The processes $(L_{t})_{0\leq t \leq T}$ and $(U_{t})_{0\leq t \leq T}$ are called the obstacles and the processes $(K_{t}^{+})_{0\leq t \leq T}$ and $(K_{t}^{-})_{0\leq t \leq T}$ are here to "push" the price respectively above and below those obstacles. \\
+
+The first step to resolve this new problem is to resolve the unreflected BSDE on the time interval $[t_{k-1},t_{k}]$, just as we described in the previous section. We then compute : $$\widetilde{\widetilde{Y}}_{t_{k-1}}=Y_{t_{k}}+\int_{t_{k-1}}^{t_{k}}f(s,Y_{s},Z_{s})ds-\int_{t_{k-1}}^{t_{k}}Z_{s}dW_{s}$$
+
+Then, if the date $t_{k-1}$ is a coupon payment date, we adjust the price and $\widetilde{Y}_{t_{k-1}}= \widetilde{\widetilde{Y}}_{t_{k-1}} + K_{t_{k-1}}^{+}$ with $K_{t_{k-1}}^{+}$ the value of the coupon rate multiplied by the value of the nominal. If $t_{k-1}$ is not a coupon payment date, then $K_{t_{k-1}}^{+}=0$. \\
+Finally, if the date $t_{k-1}$ is a call date, we have to make sure that the price of the asset doesn't go up the value at which it can be bought by the issuer. Again, we have to adjut the price. We define :
+$$U_{t_{k-1}}=\left\{
+    \begin{array}{ll}
+        \text{ Value of the call if } \widetilde{Y}_{t_{k-1}}\geq \text{ Value of the call }\\
+        0 \text{ otherwise }
+    \end{array}
+\right.$$
+
+And $Y_{t_{k-1}}=\text{min}(\widetilde{Y}_{t_{k-1}},U_{t_{k-1}})$. We can define $K_{t_{k-1}}=Y_{t_{k-1}}-\widetilde{Y}_{t_{k-1}}$ so that $(K_{t})_{0\leq t\leq T}$ sticks with its definition.
+\section{Taking into account the default risk}
+The price of the asset still doesn't include the probability of default of the issuer. In order to do that we have to multiply the price by the survival probability of the issuer.\\
+
+We thus use a reduced-form model, which consists in modeling the conditional law of the random time of default $\tau$. In this model, the conditional default probability is given by :
+\begin{equation}
+    \mathbb{Q}(\tau<t+dt|\tau\geq t)=\lambda dt
+    \label{eq:reduced-form}
+\end{equation}
+
+
+where $\lambda$ is the intensity of default.\\
+
+Let $F(t)$ denote the distribution function of default time $\tau$. We have $F(t)=\mathbb{P}(\tau\leq t)$ and if $F$ is differentiable, we can define $f$ as $F(t)=\int_{-\infty}^{t}f(u)du$.
+We can then define the survival probability $S(t) = 1-F(t) = \int_{t}^{\infty}f(u)du$.\\
+
+Now let us rewrite equation \ref{eq:reduced-form} :
+$$\lambda = lim_{dt\to 0}\frac{\mathbb{Q}(t\leq \tau<t+dt)}{dt\mathbb{Q}(\tau\geq t)} = lim_{dt\to 0}\frac{F(t+dt)-F(t)}{dt S(t)}=\frac{f(t)}{S(t)}=\frac{-S'(t)}{S(t)}$$
+
+We then have, $-\ln{S(t)}=\int_{0}^{t}\lambda du = \lambda t$, and thus $S(t)=e^{-\lambda t}$.
+
+\section{Summary of the pricing methodology}
+We can summarize the pricing methodology we use for callable barrier reverse convertible as follows :
+\begin{enumerate}
+    \item \textbf{Diffusion of the underlyings} :
+    \begin{enumerate}
+        \item Compute the correlation matrix $\Sigma$ (make it definite positive if necessary)
+        \item Generate a sample of a multivariate normal distribution of dimension $N\times d$ ($N$ is the number of simulations and $d$ the number of underlyings) and covariance matrix  $\Sigma$ 
+        \item Diffuse the underlyings with the scheme described in \ref{subsec:underlying-discretization}
+    \end{enumerate}
+    \item \textbf{Compute the payoff of the BRC} taking into account brownian bridges
+    \item \textbf{Resolution of the backward stochastic differential equation} for each step $t_{k}$ of the time grid :
+    \begin{enumerate}
+        \item Compute the conditional expection $\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t})$ for each simulation as described in \ref{subsec:conditional-expectation}
+        \item Compute $\widetilde{\widetilde{Y}}_{t_{k}}=\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t}) -r\Delta_{k}\widetilde{\widetilde{Y}}_{t_{k}}$ using Picard iterations for each simulation
+        \item Adjust the price with coupons and compute $\widetilde{Y}_{t_{k}} = \widetilde{\widetilde{Y}}_{t_{k}} + K_{t_{k}}^{+}$
+        \item Adjust the price with callability and compute $Y_{t_{k}} = \widetilde{Y}_{t_{k}} + K_{t_{k}}^{-}$
+    \end{enumerate}
+    \item \textbf{Compute the price at $t=0$} as described in \ref{subsec:computation-0}
+    \item \textbf{Take into account the default risk}, \textit{ie} multiply the price by the survival probability of the issuer
+\end{enumerate}
+
+%--------------------------------------------------------------------------
+%	Chapter 3
+%--------------------------------------------------------------------------
+
+\chapter{Results : from a barrier option to a callable BRC}
+
+\section{Choice of the time grid}
+\section{Results on a simple down-in barrier}
+\section{Results on a BRC}
+\section{Results on a callable BRC}
+
+%--------------------------------------------------------------------------
+%	Conclusion
+%-----------------------------------------------------------------------
+\backmatter
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+
+%%%%%%%%
+% BIBLIO
+%%%%%%%%
+\newpage
+\nocite{*}
+
+\bibliographystyle{plain}
+\bibliography{bibli}
+
+
+%--------------------------------------------------------------------------
+%	Annexes 
+%--------------------------------------------------------------------------
+
+\newpage
+\begingroup
+\let\clearpage\relax
+\let\cleardoublepage\relax
+
+
+\renewcommand{\thesection}{\Alph{section}}
+\chapter*{Annexes}
+\addcontentsline{toc}{chapter}{Annexes}
+\appendix
+\fancyhead[R]{Appendix}
+
+
+\endgroup
+
+\end{document}
+
+
+
