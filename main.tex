@@ -239,26 +239,25 @@ When it comes to several underlyings, the computation of $p$ becomes harder. As 
 \end{enumerate}
 Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not really the case. Nevertheless, this approximation is necessary to have simple formulas and take them into account in the payoff computation.
 \section{Resolution of the backward equation}
-Describe Monte Carlo resolution.
 \subsection{Choice of the function f}
 \label{subsec:choice-of-f}
 In order to find the expression of $f$ and to give more intuition about what the processus $(Z_{t})_{t\geq0}$, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose risk-free rate is $r$. The value of the portfolio should then evolve like this :
 $$dY_{t} = r(Y_{t}-a_{t}S_{t})dt + a_{t}dS_{t}$$
 $$dY_{t} = r(Y_{t}-a_{t}S_{t})dt + a_{t}(rS_{t}dt+\sigma S_{t}dW_{t})$$
 We can rewrite this :
-$$dY_{t} = rY_{t} + \sigma a_{t}S_{t}dW_{t}$$
+$$dY_{t} = rY_{t}dt + \sigma a_{t}S_{t}dW_{t}$$
 The processus $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
 The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
 \subsection{Resolution formula}
 Let us rewrite the backward equation at $t_{k}$ and $t_{k+1}$, two consecutive times in the time grid :
-$$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} ds$$
-$$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} ds$$
+$$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} dW_{s}$$
+$$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} dW_{s}$$
 Now let's make the difference between both :
-$$Y_{t_{k}} = Y_{t_{k+1}} + \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds - \int_{t_{k}}^{t_{k+1}}Z_{s} ds$$
+$$Y_{t_{k}} = Y_{t_{k+1}} + \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds - \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}$$
 Let $(\mathcal{F}_{t})_{t\geq0}$ be a filtration so that $(Y_{t})_{t\geq0}$ and $(S_{t})_{t\geq0}$ are adapted, and let's apply $\mathbb{E}(.|\mathcal{F}_{t_{k}})$ to the previous equation :
-$$\mathbb{E}(Y_{t_{k}}|\mathcal{F}_{t_{k}}) = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \mathbb{E}(\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds|\mathcal{F}_{t_{k}}) - \mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds|\mathcal{F}_{t_{k}})$$
+$$\mathbb{E}(Y_{t_{k}}|\mathcal{F}_{t_{k}}) = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \mathbb{E}(\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds|\mathcal{F}_{t_{k}}) - \mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}|\mathcal{F}_{t_{k}})$$
 
-The last term is equal to zero because $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds)$ thanks to the independence, and $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} ds)=0$ as being the expectation of an Ito's integral.\\
+The last term is equal to zero because $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s})$ thanks to the independence, and $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s})=0$ as being the expectation of an Ito's integral.\\
 For the deterministic term, we have $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds) = \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds$. Noting $\Delta_{k}=t_{k+1}-t_{k}$, we can approximate this integral by $\Delta_{t_{k}}f(t_{k},Y_{t_{k}})$.
 The resolution formula becomes :
 \begin{equation}
