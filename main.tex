@@ -11,7 +11,7 @@
 \usepackage{fancyhdr}
 \fancyhead[L]{\includegraphics [width=1cm]{images/Logo_ponts_paristech}}
 \fancyhead[R]{\leftmark}
-\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}  % Page margins
+\usepackage[left=3.0cm,right=3.0cm,top=3.5cm,bottom=3.5cm]{geometry}  % Page margins
 \usepackage{eso-pic}
 \usepackage[Glenn]{fncychap}
 \usepackage{array,supertabular,amsmath,amssymb,dsfont}
@@ -21,6 +21,8 @@
 \usepackage{float}
 \usepackage{color}
 \usepackage[most]{tcolorbox}
+\usepackage{pgfplots}
+\usepackage{xcolor}
 \newcommand\BackgroundPic{%
 \put(0,0){%
 \parbox[b][\paperheight]{\paperwidth}{%
@@ -215,9 +217,10 @@ The first step is to generate $d$ independent realizations of a standard normal 
 \end{tcolorbox}}
 Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives a realization of a multivariate gaussian distribution whose correlation matrix is $\Sigma$.
 \subsection{Brownian bridge and final payoff computation}
+\label{subsec:brownian-bridge}
 The problem of the discretization of the forward equation is that we lose the continuous monitoring of the BRC's barrier. In order to catch the continuity of the barrier without using a very high number of steps in the time grid, we decided to use brownian bridges.\\
 
-Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by :
+Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by \footnote{See Appendix \ref{appendix:brownian-bridge} for the demonstration of this formula}:
 $$p(x,y,T,B,\sigma) = \left\{
     \begin{array}{ll}
         1 \text{ if } x\leq B \text{ or } y\leq B \\
@@ -361,6 +364,7 @@ $$\lambda = lim_{dt\to 0}\frac{\mathbb{Q}(t\leq \tau<t+dt)}{dt\mathbb{Q}(\tau\ge
 We then have, $-\ln{S(t)}=\int_{0}^{t}\lambda du = \lambda t$, and thus $S(t)=e^{-\lambda t}$.
 
 \section{Summary of the pricing methodology}
+\label{sec:summary}
 We can summarize the pricing methodology we use for callable barrier reverse convertible as follows :
 \begin{enumerate}
     \item \textbf{Diffusion of the underlyings} :
@@ -387,10 +391,363 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 
 \chapter{Results : from a barrier option to a callable BRC}
 
-\section{Choice of the time grid}
 \section{Results on a simple down-in barrier}
-\section{Results on a BRC}
-\section{Results on a callable BRC}
+As explained in \ref{sec:BRC-definition}, one of the principal components of a \textit{Barrier Reverse Convertible} is a down and in barrier option on a put. The first step of our approach is thus to price this component with backward stochastic differential equation. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
+
+We chose here to work with only one underlying, so we have an analytical formula that gives the theoretical price of the option. Let us take the same notations as in \ref{subsec:brownian-bridge}. For a barrier level $B$ that is less than or equal to the strike $K$, the price $P$ of a down-in put is then given by\footnote{See Appendix \ref{appendix:down-in-put} for the demonstration of the pricing formula} : 
+$$P = -S_{0}\mathcal{N}(-x_{1})+Ke^{-rT}\mathcal{N}(-x_{1}+\sigma T)+S_{0}(\frac{B}{S_{0}})^{2\lambda}(\mathcal{N}(y)-\mathcal{N}(y_{1}))-Ke^{-rT}(\frac{B}{S_{0}})^{2\lambda-2}(\mathcal{N}(y-\sigma T)-\mathcal{N}(y_{1}-\sigma T))$$
+
+where :
+\begin{itemize}
+    \item $\lambda=\frac{r+\sigma^{2}/2}{\sigma^{2}}$
+    \item $y=\frac{ln(\frac{B^{2}}{S_{0}K})}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
+    \item $x_{1}=\frac{ln(S_{0}/H)}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
+    \item $y_{1}=\frac{ln(H/S_{0})}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
+    \item $\mathcal{N}(.)$ is the cumulative distribution function of a standard normal variable
+\end{itemize}
+
+The different down-in barrier options priced with our methodology are described in the following table :
+
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{*{8}{|c}|}
+\hline
+& S_{0} & K & B & \sigma & T & r & Analytical price\\
+\hline
+Case 1 	&   100 &   100 &   80  & 	10\%    &   1    &   3\%    & -0.271\\
+\hline
+Case 2	&   100 &   100 &	80  & 	20\%    &   1    &   3\%    & -4.69\\
+\hline
+Case 3 &    100 &   100 &   80  &	50\%    &   1    &   3\%    & -17.788\\
+\hline
+Case 4 	&   100 &   100 &   99  &	10\%    &   1    &   3\%    & -2.626\\
+\hline
+\end{tabular}
+\end{center}
+    \caption{Description of the down-in barrier options used for pricing}
+    \label{down-in-barriers}
+\end{table}
+
+This setup will allow us to analyse the behaviour and the convergence of our methodology for different cases, and more especially for corner cases like Case 4 (indeed, as the barrier is extremely close to the strike and the volatility high enough, the pricing of this barrier option is actually the pricing of a put option with the same strike, volatility and maturity).
+
+The following graph presents the results obtained. Each point represents the mean on 100 simulations.
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={Down-in barrier option pricing},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=10000,
+    ymin=-6, ymax=1,
+    xtick={2500,5000,7500,10000},
+    ytick={-6,-5,-4,-3,-2,-1,0,1},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=violet,
+    mark=o,
+    ]
+    coordinates {
+    (1000,-3.57)(2500,-3.53)(5000,-3.10)(7500,-2.58)(10000,-2.59)
+    };
+\addplot[
+    color=blue,
+    mark=o,
+    ]
+    coordinates {
+    (1000,-0.98)(2500,-0.85)(5000,-0.74)(7500,-0.53)(10000,-0.54)
+    };
+\addplot[
+    color=green,
+    mark=o,
+    ]
+    coordinates {
+    (1000,-0.46)(2500,-0.33)(5000,-0.30)(7500,-0.27)(10000,-0.31)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (1000,-0.67)(2500,-0.55)(5000,-0.55)(7500,-0.44)(10000,-0.47)
+    };
+\legend{Case 1, Case 2, Case 3, Case 4}
+\end{axis}
+\end{tikzpicture}
+    \label{down-in-barrier-pricing}
+    \caption{Results of the down-in barrier pricing}
+\end{center}
+\end{figure}
+
+\section{Results on callable BRCs}
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on Swatch},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=35000,
+    ymin=97.25, ymax=98.50,
+    xtick={5000,10000,15000,20000,25000,30000,35000},
+    ytick={97.25,97.50,97.75,98.0,98.25,98.50},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.31)(35000,97.31)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,98.31)(35000,98.31)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,97.68765)(5000,97.95491)(7500,98.15996)(10000,98.27687)(20000,98.382792)(25000,98.431968)(30000,98.451494)(35000,98.452746)
+    };
+    							
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-swatch}
+    \caption{Results of the pricing for a BRC on Swatch}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on UBS},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=30000,
+    ymin=96.25, ymax=97.75,
+    xtick={5000,10000,15000,20000,25000,30000},
+    ytick={96.25,96.50,96.75,97.0,97.25,97.50,97.75,98.0},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,96.37)(35000,96.37)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.37)(35000,97.37)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,97.20791)(5000,97.25249)(7500,97.38109)(10000,97.49125)(20000,97.596942)(25000,97.630838)(30000,97.645504)
+    };
+    							
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-ubs}
+    \caption{Results of the pricing for a BRC on UBS}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on Swisscom},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=50000,
+    ymin=98.25, ymax=100,
+    xtick={5000,10000,15000,20000,25000,30000,35000,40000,45000,50000},
+    ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.68)(50000,98.68)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.68)(50000,99.68)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,98.70934)(5000,98.76605)(7500,98.79450)(10000,98.83654)(20000,98.876740)(25000,98.881560)(30000,98.915430)(35000,98.946450)(40000,98.965340)(45000,98.978710)(50000,98.981940)
+    };
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-swisscom}
+    \caption{Results of the pricing for a BRC on Swisscom}
+\end{center}
+\end{figure}
+
+\section{Results on multi callable BRCs}
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50 and Nikkei225},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=35000,
+    ymin=97, ymax=99,
+    xtick={5000,10000,15000,20000,25000,30000,35000},
+    ytick={97.0,97.25,97.5,97.75,98,98.25,98.5,98.75,99},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.12)(35000,97.12)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.9)(35000,97.9)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,98.118750)(5000,98.222870)(7500,98.350130)(10000,98.425353)(20000,98.478750)(25000,98.45757)(30000,98.40819)(35000,98.44820)
+    };
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-nikkei}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, Nikkei225}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50 and S\&P500},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=30000,
+    ymin=101.5, ymax=103.5,
+    xtick={5000,10000,15000,20000,25000,30000,30000},
+    ytick={101.5,101.75,102,102.25,102.5,102.75,103,103.25,103.5},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,101.61)(35000,101.61)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,102.11)(35000,102.11)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,103.1411028)(5000,103.1517035)(7500,103.1552361)(10000,103.1570022)(20000,103.15965)(25000,103.16018)(30000,103.16053)
+    };
+    						
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-sp500}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[!h]
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=40000,
+    ymin=98.5, ymax=99.75,
+    xtick={5000,10000,15000,20000,25000,30000,35000,40000},
+    ytick={98.5,98.75,99,99.25,99.5,99.75},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.57)(40000,98.57)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.43)(40000,99.43)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,99.59246987)(5000,99.60809215)(7500,99.58864458)(10000,99.61014605)(20000,99.683560)(25000,99.679430)(30000,99.701340)(35000,99.722940)(40000,99.710480)
+    };
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-sp500-nikkei}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500, Nikkei225}
+\end{center}
+\end{figure}
 
 %--------------------------------------------------------------------------
 %	Conclusion
@@ -411,7 +768,7 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 
 
 %--------------------------------------------------------------------------
-%	Annexes 
+%	Appendix
 %--------------------------------------------------------------------------
 
 \newpage
@@ -421,11 +778,18 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 
 
 \renewcommand{\thesection}{\Alph{section}}
-\chapter*{Annexes}
-\addcontentsline{toc}{chapter}{Annexes}
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
 \appendix
 \fancyhead[R]{Appendix}
 
+\section{Demonstration of the brownian bridge formula}
+\label{appendix:brownian-bridge}
+
+\section{Demonstration of the down-in put option pricing formula}
+\label{appendix:down-in-put}
+
+The pricing formula of a down-in put option is...(See \cite{hull2016options})
 
 \endgroup
 
