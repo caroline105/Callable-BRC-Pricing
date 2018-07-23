@@ -11,7 +11,7 @@
 \usepackage{fancyhdr}
 \fancyhead[L]{\includegraphics [width=1cm]{images/Logo_ponts_paristech}}
 \fancyhead[R]{\leftmark}
-\usepackage[left=3.0cm,right=3.0cm,top=3.5cm,bottom=3.5cm]{geometry}  % Page margins
+\usepackage[left=3.25cm,right=3.25cm,top=4.5cm,bottom=5.0cm]{geometry}  % Page margins
 \usepackage{eso-pic}
 \usepackage[Glenn]{fncychap}
 \usepackage{array,supertabular,amsmath,amssymb,dsfont}
@@ -52,7 +52,7 @@ keepaspectratio]{background.jpg}%
 \usepackage{mathrsfs,amsmath} 
 \newtheorem{prop}{Proposition}
 \newtheorem*{theorem}{Théorème}
-\usepackage[left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry} % Page margins
+\usepackage[left=3.0cm,right=3.0cm,top=5.5cm,bottom=5.5cm]{geometry} % Page margins
 \usepackage[colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
 \let\cleardoublepage\clearpage
 \definecolor{ballblue}{rgb}{0.13, 0.67, 0.8}
@@ -129,6 +129,7 @@ Caroline \textsc{OSTER}
 \addcontentsline{toc}{chapter}{Introduction}
 \vspace*{-2cm}
 
+STATS on BRCs in Switzerland
 %--------------------------------------------------------------------------
 %	Chapter 1 
 %--------------------------------------------------------------------------
@@ -137,11 +138,53 @@ Caroline \textsc{OSTER}
 
 \chapter{Description of a callable barrier reverse convertible}
 
-\section{What is a barrier reverse convertible ?}
+\section{Definition of a \textit{Standard Reverse Convertible}}
+In order to understand what a \textit{Barrier Reverse Convertible} is, we will first give a brief definition of a \textit{Standard Reverse Convertible} : this kind of financial instrument is a bond-like security that pays a coupon that is generally very high compared to the risk-free interest rate. This bond is combined with a short put option, as can be seen in \ref{fig:RC-payoff}.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.7]{images/RC.png}
+    \caption{Payoff profile of a \textit{Reverse Convertible}. Source : \cite{lindauer2008pricing}}
+    \label{fig:RC-payoff}
+\end{figure}
+
+The payment is made as follows : if the price of the underlying ends above the strike at maturity, the nominal is given back as the final payoff. In this case, the final payoff is called the cap. On the contrary, if the price of the underlying ends under the strike at maturity, the final payoff is the one of a short put. All the coupons are paid during the lifetime of the asset.\\
+
+Let us denote $K$ the strike of the asset and $S_{T}$ the price of the underlying at maturity $T$. The final payoff $P$ can hence been expressed as follow :
+$P=\text{cap}-(K-S_{T})_{+}$.\\
+
+With this kind of security, the investor generally expects the market to move higher or at least to remain stable, so he doesn't lose his capital and makes benefits with high coupons. Moreover, a \textit{Reverse Convertible} can be beneficial if the volatility is expected to decrease or to stay low in the future, as the investor is mainly shorting volatility.
+
+\section{Definition of a \textit{Barrier Reverse Convertible}}
 \label{sec:BRC-definition}
 
-\section{Adding the callability}
+The \textit{Barrier Reverse Convertible} is slightly different because it contains a barrier on the level of the underlying : if the underlying doesn't reach the barrier during the lifetime of the asset, the nominal is given back at the end, but in the case it is, the put is activated and the final payoff is the one of a short put. Of course, coupons are paid according to the terms of the contract. The main difference with the \textit{Reverse Convertible} is thus the path-dependency of the asset. \\
 
+Figure \ref{fig:BRC-payoff} summarizes the payoff profile of a \textit{Barrier Reverse Convertible}:
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[scale=0.65]{images/BRC.png}
+    \caption{Payoff profile of a \textit{Barrier Reverse Convertible}. Source : \cite{lindauer2008pricing}}
+    \label{fig:BRC-payoff}
+\end{figure}
+
+The barrier is always a knock-in option, but it can be either 'up' or 'down'. If the barrier is 'up', it means that it is reached if the level of the underlying is above it. If the barrier is down, it is reached if the level of the underlying is below it.
+
+\section{Multi \textit{Barrier Reverse Convertibles}}
+\label{sec:multi-BRC-definition}
+Multi \textit{Barrier Reverse Convertibles} are a type of \textit{Barrier Reverse Convertibles} that have several underlyings. This changes the definition of how the barrier is reached and if the final value is above the strike. In both aspects, several definition can be considered :
+
+\begin{itemize}
+    \item \textbf{"WorstOf" case}: in this case, the underlying chosen to be compared with the barrier (or the strike) is the one with the worst performance regarding the barrier (or the strike).
+    \item \textbf{"BestOf" case}: in this case, the underlying chosen to be compared with the barrier (or the strike) is the one with the best performance regarding the barrier (or the strike).
+    \item \textbf{"Basket" case}: in this case, a linear combination of the performances of the underlyings is chosen to be compared with the barrier (or the strike).
+\end{itemize}
+
+The definition of the underlying chosen to be compared with the barrier can be different from the one chosen to be compared with the strike, which allows 9 different types of multi BRCs.
+
+\section{Adding the callability}
+To the regular (multi) BRCs can be added the callability by the issuer. This means that the issuer can buy the contract at several dates and at a certain amount specified in the contract. The amount of this redemption is generally the nominal plus the on-going coupon.
 
 %--------------------------------------------------------------------------
 %	Chapter 2 
@@ -152,10 +195,16 @@ Caroline \textsc{OSTER}
 \chapter{Pricing Methodology with Reflected Backward Stochastic Differential Equations}
 
 \section{Motivations}
+\label{sec:motivations}
+Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with it is that the price between the begining and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time steps needed, but this would be computationally too long and too complex to be efficient.  \\
+
+A better solution would be to proceed in a backward manner, begining with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.\\
+
+The best way to compute the price of a BRC seems thus to modelise it thanks to stochastic differential equation and to resolve this equation in a backward manner. The modelisation chosen here is a forward-backward stochastic differential equation system, whose resolution will be detailed in the next sections.
 
 \section{Presentation of the SDE system}
 \label{sec:SDE-presentation}
-The objective is to calculate the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
+As explained in \ref{sec:motivations}, the objective is to compute the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
 $$S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}$$
 $$Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}$$
 $\textbf{S}=(S_{t})_{t\geq0}$ is the forward component of the system. It represents the underlyings and its dimension is $d$. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is unidimensional.\\
@@ -230,7 +279,7 @@ $$p(x,y,T,B,\sigma) = \left\{
 The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=p(S_{t_{i}},S_{t_{i+1}},\Delta_{i},B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows :
 $$\Phi(S) = cap -(K-S_{T})_{+}(1-p)$$
 
-When it comes to several underlyings, the computation of $p$ becomes harder. As explained in \ref{sec:BRC-definition}, the barrier can be a \textit{WorstOf} or a \textit{BestOf}. This means we can have 4 cases :
+When it comes to several underlyings, the computation of $p$ becomes harder. As explained in \ref{sec:multi-BRC-definition}, the barrier can be a \textit{WorstOf} or a \textit{BestOf}. This means we can have 4 cases :
 \begin{enumerate}
     \item \textbf{The barrier is a \textit{WorstOf} and is down} : the barrier is touched if at least one of the underlying has touched the barrier, which is the complementary of the event "Not any underlying has touched the barrier". We then have $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$, where $p_{i}^{j}$ is the probability that the $j^{th}$ underlying as reached the barrier between $t_{i}$ and $t_{i+1}$.
     
