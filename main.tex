@@ -169,7 +169,7 @@ Figure \ref{fig:BRC-payoff} summarizes the payoff profile of a \textit{Barrier R
     \label{fig:BRC-payoff}
 \end{figure}
 
-The barrier is always a knock-in option, but it can be either 'up' or 'down'. If the barrier is 'up', it means that it is reached if the level of the underlying is above it. If the barrier is down, it is reached if the level of the underlying is below it.
+The barrier is always a knock-in option\footnote{See Appendix \ref{appendix:down-in-put} for a reminder on barrier options}, but it can be either 'up' or 'down'. If the barrier is 'up', it means that it is reached if the level of the underlying is above it. If the barrier is down, it is reached if the level of the underlying is below it.
 
 \section{Multi \textit{Barrier Reverse Convertibles}}
 \label{sec:multi-BRC-definition}
@@ -443,8 +443,11 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 \section{Results on a simple down-in barrier}
 As explained in \ref{sec:BRC-definition}, one of the principal components of a \textit{Barrier Reverse Convertible} is a down and in barrier option on a put. The first step of our approach is thus to price this component with backward stochastic differential equation. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
 
-We chose here to work with only one underlying, so we have an analytical formula that gives the theoretical price of the option. Let us take the same notations as in \ref{subsec:brownian-bridge}. For a barrier level $B$ that is less than or equal to the strike $K$, the price $P$ of a down-in put is then given by\footnote{See Appendix \ref{appendix:down-in-put} for the demonstration of the pricing formula} : 
-$$P = -S_{0}\mathcal{N}(-x_{1})+Ke^{-rT}\mathcal{N}(-x_{1}+\sigma T)+S_{0}(\frac{B}{S_{0}})^{2\lambda}(\mathcal{N}(y)-\mathcal{N}(y_{1}))-Ke^{-rT}(\frac{B}{S_{0}})^{2\lambda-2}(\mathcal{N}(y-\sigma T)-\mathcal{N}(y_{1}-\sigma T))$$
+We chose here to work with only one underlying, so we have an analytical formula that gives the theoretical price of the option. Let us take the same notations as in \ref{subsec:brownian-bridge}. For a barrier level $B$ that is less than or equal to the strike $K$, the price $P$ of a down-in put is then given by \cite{hull2016options}: 
+$$\begin{align}
+P =& -S_{0}\mathcal{N}(-x_{1})+Ke^{-rT}\mathcal{N}(-x_{1}+\sigma T)+S_{0}(\frac{B}{S_{0}})^{2\lambda}(\mathcal{N}(y)-\mathcal{N}(y_{1})) \\
+&-Ke^{-rT}(\frac{B}{S_{0}})^{2\lambda-2}(\mathcal{N}(y-\sigma T)-\mathcal{N}(y_{1}-\sigma T))
+\end{align}$$
 
 where :
 \begin{itemize}
@@ -832,13 +835,36 @@ The following graph presents the results obtained. Each point represents the mea
 \appendix
 \fancyhead[R]{Appendix}
 
+\section{Generalities on continuous barrier options}
+\label{appendix:down-in-put}
+
+\subsection{Brief description of continuous barrier options}
+A continuous barrier option is a path-dependent option whose final payoff depends on whether the price of the underlying asset has reached a certain barrier level or not. The monitoring of the barrier is made continuously during the lifetime of the option. The payoff of those options is generally the one of a call or a put.\\
+
+The four main types of continuous barrier options are the following :
+\begin{itemize}
+    \item \textbf{Up-and-Out}: The barrier is reached if the price of the underlying happens to be above the barrier level. In this case, the option becomes worthless.
+    \item \textbf{Down-and-Out} : The barrier is reached if the price of the underlying happens to be below the barrier level. In this case, the option becomes worthless.
+    \item \textbf{Up-and-In} : The barrier is reached if the price of the underlying happens to be above the barrier level. In this case, the option is activated.
+    \item \textbf{Down-and-In} : The barrier is reached if the price of the underlying happens to be below the barrier level. In this case, the option is activated.
+\end{itemize}
+
+\subsection{In-out parity}
+Let us assume one holds two continuous barrier options with the same barrier level. The first one is a X-and-in option $O_{in}$, whereas the second one is a X-and-out option $O_{out}$. Two situations can happen : 
+\begin{itemize}
+    \item The price of the underlying reaches the barrier during the lifetime of the asset, then the X-and-in option is activated and pays at the end the payoff of the vanilla option $O$.
+    \item The price of the underlying does not reache the barrier during the lifetime of the asset, then the X-and-out option pays at the end the payoff of the vanilla option $O$.
+\end{itemize}
+
+The final payoff of this basket of options is thus the same as the one of the corresponding vanilla option. By virtue of the no-arbitrage condition, we can write the in-out parity as follows : 
+$$O = O_{in} + O_{out}$$
+
+This formula is valid for continuous barrier options on all european-style assets, and more especially continuous barrier options on calls and puts.
+
 \section{Demonstration of the brownian bridge formula}
 \label{appendix:brownian-bridge}
 
-\section{Demonstration of the down-in put option pricing formula}
-\label{appendix:down-in-put}
 
-The pricing formula of a down-in put option is...(See \cite{hull2016options})
 
 \endgroup
 
