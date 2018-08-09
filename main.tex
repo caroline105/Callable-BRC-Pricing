@@ -9,9 +9,10 @@
 \usepackage{graphicx,epsfig,subfigure}
 \usepackage{ragged2e}
 \usepackage{fancyhdr}
+\usepackage{booktabs}
 \fancyhead[L]{\includegraphics [width=1cm]{images/Logo_ponts_paristech}}
 \fancyhead[R]{\leftmark}
-\usepackage[left=3.25cm,right=3.25cm,top=4.5cm,bottom=5.0cm]{geometry}  % Page margins
+\usepackage[left=3.5cm,right=3.5cm,top=4.5cm,bottom=5.0cm]{geometry}  % Page margins
 \usepackage{eso-pic}
 \usepackage[Glenn]{fncychap}
 \usepackage{array,supertabular,amsmath,amssymb,dsfont}
@@ -441,7 +442,7 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 \chapter{Results : from a barrier option to a callable BRC}
 
 \section{Results on a simple down-in barrier}
-As explained in \ref{sec:BRC-definition}, one of the principal components of a \textit{Barrier Reverse Convertible} is a down and in barrier option on a put. The first step of our approach is thus to price this component with backward stochastic differential equation. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
+As explained in \ref{sec:BRC-definition}, one of the principal components of a \textit{Barrier Reverse Convertible} is a down and in barrier option on a put. The first step of our approach is thus to price this component with a backward stochastic differential equation resolution. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
 
 We chose here to work with only one underlying, so we have an analytical formula that gives the theoretical price of the option. Let us take the same notations as in \ref{subsec:brownian-bridge}. For a barrier level $B$ that is less than or equal to the strike $K$, the price $P$ of a down-in put is then given by \cite{hull2016options}: 
 $$\begin{align}
@@ -482,11 +483,11 @@ Case 4 	&   100 &   100 &   99  &	10\%    &   1    &   3\%    & -2.626\\
 
 This setup will allow us to analyse the behaviour and the convergence of our methodology for different cases, and more especially for corner cases like Case 4 (indeed, as the barrier is extremely close to the strike and the volatility high enough, the pricing of this barrier option is actually the pricing of a put option with the same strike, volatility and maturity).
 
-The following graph presents the results obtained. Each point represents the mean on 100 simulations.
+The following graph presents the results obtained. Each point represents the mean on 100 pricings.
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={Down-in barrier option pricing},
     xlabel={Number of simulations},
@@ -535,11 +536,34 @@ The following graph presents the results obtained. Each point represents the mea
 \end{center}
 \end{figure}
 
+\begin{table}
+\centering
+\begin{tabular}{l c c c c c} 
+& \multicolumn{5}{c}{Growth Media} \\ 
+\cmidrule(l){2-6} 
+Strain & 1 & 2 & 3 & 4 & 5\\ % Column names row
+\midrule % In-table horizontal line
+GDS1002 & 0.962 & 0.821 & 0.356 & 0.682 & 0.801\\ % Content row 1
+NWN652 & 0.981 & 0.891 & 0.527 & 0.574 & 0.984\\ % Content row 2
+PPD234 & 0.915 & 0.936 & 0.491 & 0.276 & 0.965\\ % Content row 3
+JSB126 & 0.828 & 0.827 & 0.528 & 0.518 & 0.926\\ % Content row 4
+JSB724 & 0.916 & 0.933 & 0.482 & 0.644 & 0.937\\ % Content row 5
+\midrule % In-table horizontal line
+\midrule % In-table horizontal line
+Average Rate & 0.920 & 0.882 & 0.477 & 0.539 & 0.923\\ % Summary/total row
+\bottomrule % Bottom horizontal line
+\end{tabular}
+\caption{Table caption text} % Table caption, can be commented out if no caption is required
+\label{tab:template} % A label for referencing this table elsewhere, references are used in text as \ref{label}
+\end{table}
+
+We can see that the convergence is obtained in each case, with an absolute relative error inferior to 3\% in Case 1 and inferior to 1\% for the other cases. Results for the Case 1 seem to be less precise than the others ; this could be explained by the fact that in this case, the barrier is rarely touched and there is only a few simulations which end to a non-worthless payoff. The estimation of the conditional expectation can thus become more difficult and unprecise.
+
 \section{Results on callable BRCs}
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on Swatch},
     xlabel={Number of simulations},
@@ -582,9 +606,9 @@ The following graph presents the results obtained. Each point represents the mea
 \end{figure}
 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on UBS},
     xlabel={Number of simulations},
@@ -627,9 +651,9 @@ The following graph presents the results obtained. Each point represents the mea
 \end{figure}
 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on Swisscom},
     xlabel={Number of simulations},
@@ -672,9 +696,9 @@ The following graph presents the results obtained. Each point represents the mea
 
 \section{Results on multi callable BRCs}
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
@@ -715,9 +739,9 @@ The following graph presents the results obtained. Each point represents the mea
 \end{figure}
 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
@@ -759,9 +783,317 @@ The following graph presents the results obtained. Each point represents the mea
 \end{figure}
 
 
-\begin{figure}[!h]
+\begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=40000,
+    ymin=98.5, ymax=99.75,
+    xtick={5000,10000,15000,20000,25000,30000,35000,40000},
+    ytick={98.5,98.75,99,99.25,99.5,99.75},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.57)(40000,98.57)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.43)(40000,99.43)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,99.59246987)(5000,99.60809215)(7500,99.58864458)(10000,99.61014605)(20000,99.683560)(25000,99.679430)(30000,99.701340)(35000,99.722940)(40000,99.710480)
+    };
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-sp500-nikkei}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500, Nikkei225}
+\end{center}
+\end{figure}
+
+\section{Improvement of the methodology with a volatility structure}
+\subsection{The need of a volatility structure}
+The previous methodology presents very strong and not realistic hypothesis ; for example, the choice of a model whose volatility remains constant over the whole period of pricing is not realistic. In order to improve our methodology and obtain better results, we chose to modelize the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
+
+\subsection{Gregory-Delbourgo interpolation}
+This rational quadratic spline interpolation has been presented by Gregory \& Delbourgo in \cite{gregory1982piecewise}. The main advantage of such an interpolation is that it provides an interpolant of continuity class $C^1$ and that it preserves the shape of the initial data set. Note that this interpolation only works for a strictly monotonic set of points $(x_i,f_i)$, for $i=1,...,n$. \\
+
+In this case, it will be assumed that $f_1 < f_2 < ...< f_n$ since the case of strictly decreasing set of points can be treated the same way. The aim of the interpolation is to build a piecewise rational quadratic function $s(x)$ on $[x_1;x_n]$ such that :
+$$\forall i=1,..,n, s(x_i)=f_i$$
+
+Let us write $h_i=x_{i+1}-x_i$, $\theta=\frac{x-x_i}{h_i}$ and $\Delta_i=\frac{f_{i+1}-f_i}{h_i}$
+
+We can define, for $i=2,...,n-1$: $$d_i = \left\{
+    \begin{array}{ll}
+        0 \text{ if } f_{i+1}=f_i \\
+        \frac{\Delta_i\Delta_{i-1}}{(f_{i+1}-f_{i-1})(x_{i+1}-x_{i-1})} \text{ otherwise }
+    \end{array}
+\right.$$
+
+And 
+$$d_1 = \left\{
+    \begin{array}{ll}
+        0 \text{ if } f_{1}=f_2 \\
+        \frac{\Delta_1^2}{(f_{3}-f_{1})(x_{3}-x_{1})} \text{ otherwise }
+    \end{array}
+\right.$$
+
+$$d_n = \left\{
+    \begin{array}{ll}
+        0 \text{ if } f_{n-1}=f_n \\
+        \frac{\Delta_{n-1}^2}{(f_{n}-f_{n-2})(x_{n}-x_{n-2})} \text{ otherwise }
+    \end{array}
+\right.$$
+
+We then have, for $x\in [x_i;x_{i+1}]$ : $$s(x) = f_i + \frac{(f_{i+1}-f_{i})(\Delta_i\theta^2+d_i\theta(1-\theta))}{\Delta_i+(d_{i+1}+d_i-2\Delta_i)\theta(1-\theta)}$$
+
+This can be rewrite like this :
+$$s(x)=\frac{f_{i+1}\theta^2 + \Delta_i^{-1}(f_{i+1}d_i+f_id_{i+1})\theta(1-\theta)+f_i(1-\theta)^2}{\theta^2+\Delta_i^{-1}(d_{i+1}+d_i)\theta(1-\theta)+(1-\theta)^2}$$
+
+For $0 \leq \theta \leq 1$, the denominator is always positive. Furthermore, we can differentiate $s$ for $x\in[x_i;x_{i+1}]$ :
+$$s^{(1)}(x) = \frac{d_{i+1}\theta^2+2\Delta_i\theta(1-\theta+d_i(1-\theta)^2)}{(\theta^2+\Delta_i^{-1}(d_{i+1}+d_i)\theta(1-\theta)+(1-\theta)^2)^2}$$
+
+We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $s^{(1)}(x)>0$, which was expected.
+
+\subsection{Results}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on Swatch},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=35000,
+    ymin=97.25, ymax=98.50,
+    xtick={5000,10000,15000,20000,25000,30000,35000},
+    ytick={97.25,97.50,97.75,98.0,98.25,98.50},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.31)(35000,97.31)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,98.31)(35000,98.31)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,97.68765)(5000,97.95491)(7500,98.15996)(10000,98.27687)(20000,98.382792)(25000,98.431968)(30000,98.451494)(35000,98.452746)
+    };
+    							
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-swatch}
+    \caption{Results of the pricing for a BRC on Swatch}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on UBS},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=30000,
+    ymin=96.25, ymax=97.75,
+    xtick={5000,10000,15000,20000,25000,30000},
+    ytick={96.25,96.50,96.75,97.0,97.25,97.50,97.75,98.0},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,96.37)(35000,96.37)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.37)(35000,97.37)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,97.20791)(5000,97.25249)(7500,97.38109)(10000,97.49125)(20000,97.596942)(25000,97.630838)(30000,97.645504)
+    };
+    							
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-ubs}
+    \caption{Results of the pricing for a BRC on UBS}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on Swisscom},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=50000,
+    ymin=98.25, ymax=100,
+    xtick={5000,10000,15000,20000,25000,30000,35000,40000,45000,50000},
+    ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.68)(50000,98.68)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.68)(50000,99.68)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,98.70934)(5000,98.76605)(7500,98.79450)(10000,98.83654)(20000,98.876740)(25000,98.881560)(30000,98.915430)(35000,98.946450)(40000,98.965340)(45000,98.978710)(50000,98.981940)
+    };
+\legend{Bid, Ask, Price}
+
+\end{axis}
+\end{tikzpicture}
+\label{brc-swisscom}
+    \caption{Results of the pricing for a BRC on Swisscom}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50 and Nikkei225},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=35000,
+    ymin=97, ymax=99,
+    xtick={5000,10000,15000,20000,25000,30000,35000},
+    ytick={97.0,97.25,97.5,97.75,98,98.25,98.5,98.75,99},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.12)(35000,97.12)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.9)(35000,97.9)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,98.118750)(5000,98.222870)(7500,98.350130)(10000,98.425353)(20000,98.478750)(25000,98.45757)(30000,98.40819)(35000,98.44820)
+    };
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-nikkei}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, Nikkei225}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{axis}[
+    title={BRC on SMI, EuroStoxx50 and S\&P500},
+    xlabel={Number of simulations},
+    ylabel={Relative error (\%)},
+    xmin=0, xmax=30000,
+    ymin=101.5, ymax=103.5,
+    xtick={5000,10000,15000,20000,25000,30000,30000},
+    ytick={101.5,101.75,102,102.25,102.5,102.75,103,103.25,103.5},
+    legend pos=south east,
+    ymajorgrids=true,
+    grid style=dashed,
+]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,101.61)(35000,101.61)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,102.11)(35000,102.11)
+    };
+\addplot[
+    color=cyan,
+    mark=o,
+    ]
+    coordinates {
+    (2500,103.1411028)(5000,103.1517035)(7500,103.1552361)(10000,103.1570022)(20000,103.15965)(25000,103.16018)(30000,103.16053)
+    };
+    						
+\legend{Bid, Ask, Price}
+\end{axis}
+\end{tikzpicture}
+    \label{brc-smi-eurostoxx-sp500}
+    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500}
+\end{center}
+\end{figure}
+
+
+\begin{figure}[H]
+\begin{center}
+\begin{tikzpicture}[yscale=0.9][xscale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
