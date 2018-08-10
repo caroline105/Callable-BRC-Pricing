@@ -194,7 +194,7 @@ To the regular (multi) BRCs can be added the callability by the issuer. This mea
 \pagestyle{fancy}
 
 \chapter{Pricing Methodology with Reflected Backward Stochastic Differential Equations}
-
+\label{chap:pricing-methodology}
 \section{Motivations}
 \label{sec:motivations}
 Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with it is that the price between the begining and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time steps needed, but this would be computationally too long and too complex to be efficient.  \\
@@ -264,7 +264,7 @@ The first step is to generate $d$ independent realizations of a standard normal 
 \right.$$
  \item Writing $D^{*}$ the diagonal matrix with $d_{ii}^{*}$ the diagonal elements, we can compute $$\Sigma^{*}=PD^{*}P^{-1}$$ where $\Sigma^{*}$ is the corrected definite positive matrix.
 \end{enumerate}
-\end{tcolorbox}}
+\end{tcolorbox}
 Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives a realization of a multivariate gaussian distribution whose correlation matrix is $\Sigma$.
 \subsection{Brownian bridge and final payoff computation}
 \label{subsec:brownian-bridge}
@@ -463,18 +463,15 @@ The different down-in barrier options priced with our methodology are described 
 
 \begin{table}[H]
 \begin{center}
-\begin{tabular}{*{8}{|c}|}
-\hline
-& S_{0} & K & B & \sigma & T & r & Analytical price\\
-\hline
+\begin{tabular}{l c c c c c c c} 
+\cmidrule(l){1-8} 
+Case & $S_{0}$ & K & B & $$\sigma$ & T & r & Analytical price\\ % Column names row
+\midrule % In-table horizontal line
 Case 1 	&   100 &   100 &   80  & 	10\%    &   1    &   3\%    & -0.271\\
-\hline
 Case 2	&   100 &   100 &	80  & 	20\%    &   1    &   3\%    & -4.69\\
-\hline
 Case 3 &    100 &   100 &   80  &	50\%    &   1    &   3\%    & -17.788\\
-\hline
 Case 4 	&   100 &   100 &   99  &	10\%    &   1    &   3\%    & -2.626\\
-\hline
+\bottomrule % Bottom horizontal line
 \end{tabular}
 \end{center}
     \caption{Description of the down-in barrier options used for pricing}
@@ -483,11 +480,11 @@ Case 4 	&   100 &   100 &   99  &	10\%    &   1    &   3\%    & -2.626\\
 
 This setup will allow us to analyse the behaviour and the convergence of our methodology for different cases, and more especially for corner cases like Case 4 (indeed, as the barrier is extremely close to the strike and the volatility high enough, the pricing of this barrier option is actually the pricing of a put option with the same strike, volatility and maturity).
 
-The following graph presents the results obtained. Each point represents the mean on 100 pricings.
+Figure \ref{fig:down-in-barrier-pricing} and Table \ref{tab:barrier-option-pricing} present the results obtained on 100 pricings.
 
 \begin{figure}[H]
 \begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\begin{tikzpicture}[yscale=0.9][xscale=0.5]
 \begin{axis}[
     title={Down-in barrier option pricing},
     xlabel={Number of simulations},
@@ -531,35 +528,53 @@ The following graph presents the results obtained. Each point represents the mea
 \legend{Case 1, Case 2, Case 3, Case 4}
 \end{axis}
 \end{tikzpicture}
-    \label{down-in-barrier-pricing}
+    \label{fig:down-in-barrier-pricing}
     \caption{Results of the down-in barrier pricing}
 \end{center}
 \end{figure}
 
 \begin{table}
 \centering
-\begin{tabular}{l c c c c c} 
-& \multicolumn{5}{c}{Growth Media} \\ 
-\cmidrule(l){2-6} 
-Strain & 1 & 2 & 3 & 4 & 5\\ % Column names row
+\begin{tabular}{l c c c c} 
+& \multicolumn{4}{c}{Case} \\ 
+\cmidrule(l){2-5} 
+Nb of simulations & 1 & 2 & 3 & 4\\ % Column names row
 \midrule % In-table horizontal line
-GDS1002 & 0.962 & 0.821 & 0.356 & 0.682 & 0.801\\ % Content row 1
-NWN652 & 0.981 & 0.891 & 0.527 & 0.574 & 0.984\\ % Content row 2
-PPD234 & 0.915 & 0.936 & 0.491 & 0.276 & 0.965\\ % Content row 3
-JSB126 & 0.828 & 0.827 & 0.528 & 0.518 & 0.926\\ % Content row 4
-JSB724 & 0.916 & 0.933 & 0.482 & 0.644 & 0.937\\ % Content row 5
-\midrule % In-table horizontal line
-\midrule % In-table horizontal line
-Average Rate & 0.920 & 0.882 & 0.477 & 0.539 & 0.923\\ % Summary/total row
+1000 & -3.57\% & -0.98\% & -0.46\% & -0.67\%\\ % Content row 1
+2500 & -3.53\% & -0.85\% & -0.33\% & -0.55\%\\ % Content row 2
+5000 & -3.10\% & -0.74\% & -0.30\% & -0.55\%\\ % Content row 3
+7500 & -2.58\% & -0.53\% & -0.27\% & -0.44\%\\ % Content row 4
+10000 & -2.59\% & -0.54\% & -0.31\% & -0.47\%\\ % Content row 5
 \bottomrule % Bottom horizontal line
 \end{tabular}
-\caption{Table caption text} % Table caption, can be commented out if no caption is required
-\label{tab:template} % A label for referencing this table elsewhere, references are used in text as \ref{label}
+\caption{Relative errors (\%) on the down-in barrier pricing (mean on 100 pricings)}
+\label{tab:barrier-option-pricing}
 \end{table}
 
 We can see that the convergence is obtained in each case, with an absolute relative error inferior to 3\% in Case 1 and inferior to 1\% for the other cases. Results for the Case 1 seem to be less precise than the others ; this could be explained by the fact that in this case, the barrier is rarely touched and there is only a few simulations which end to a non-worthless payoff. The estimation of the conditional expectation can thus become more difficult and unprecise.
 
 \section{Results on callable BRCs}
+After having priced the down-in barrier successfully, we can now price a more complex instrument such as the \textit{Barrier Reverse Convertible}. In order to do that, the whole methodology described in \ref{chap:pricing-methodology} is now applied, that is to say that the coupons and the callability, as well as the credit risk, are now taken into account. \\
+
+For this pricing, we chose three real-world \textit{Barrier Reverse Convertibles}, all uni-dimensional (\textit{i.e.} only one underlying is monitoring the barrier). Their characteristics are gathered in Table \ref{tab:uni-BRC-charachteristics} :
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l c c c c c c } 
+& \multicolumn{6}{c}{Characteristics} \\ 
+\cmidrule(l){2-7} 
+BRC & Underlying & Volatility & Strike\footnote{this is also the initial level of the underlying} & Barrier Level & Coupon Rate & Maturity\\ % Column names row
+\midrule % In-table horizontal line
+1 & Swatch & 22.25\% & 474.60 & 355.95 & 1.35\% & 2 years\\ % Content row 1
+2 & UBS & 23.11\% & 16.31 & 12.23 & 1.65\% & 2 years\\ % Content row 2
+3 & Swisscom & 17.168\% & 444.30 & 399.87 & 1.5\% & 1 year\\ % Content row 3
+\bottomrule % Bottom horizontal line
+\end{tabular}
+\caption{Description of the \textit{Barrier Reverse Convertibles} priced}
+\label{tab:uni-BRC-charachteristics}
+\end{table}
+
+Graphs \ref{fig:brc-swatch}, \ref{brc-ubs} and \ref{brc-swisscom} sum up the results obtained :
 
 \begin{figure}[H]
 \begin{center}
@@ -600,7 +615,7 @@ We can see that the convergence is obtained in each case, with an absolute relat
 
 \end{axis}
 \end{tikzpicture}
-\label{brc-swatch}
+    \label{fig:brc-swatch}
     \caption{Results of the pricing for a BRC on Swatch}
 \end{center}
 \end{figure}
@@ -695,6 +710,32 @@ We can see that the convergence is obtained in each case, with an absolute relat
 \end{figure}
 
 \section{Results on multi callable BRCs}
+We now apply the pricing methodology on multi-callable \textit{Barrier Reverse Convertibles}. We chose three assets that are described in Table \ref{tab:multi-BRC-charachteristics} :
+
+\begin{table}[H]
+\centering
+\begin{tabular}{l c c c c c c } 
+& \multicolumn{6}{c}{Characteristics} \\ 
+\cmidrule(l){2-7} 
+BRC & Underlyings & Volatility & Strike\footnote{this is also the initial level of the underlying} & Barrier Level & Coupon Rate & Maturity\\ % Column names row
+\midrule % In-table horizontal line
+ & SMI & 14.42\% & 8940.46 & 5364.276 & & \\ % Content row 1
+1 & EuroStoxx50 & 13.21\% & 3573.76 & 2144.256 & 2.0\% & 3 years\\ % Content row 1
+ & Nikkei225 & 16.50\% & 22930.36 & 13758.216 &  &\\ % Content row 1
+ \midrule % In-table horizontal line
+ & SMI & 14.42\% & 8824.56 & 4324.03 &  & \\ % Content row 1
+2 & EuroStoxx50 & 13.21\% & 3269.63 & 1602.12 & 3.24\% & 1 year\\ % Content row 1
+ & S\&P500 & 15.23\% & 1972.18 & 966.37 & & \\ % Content row 1
+\midrule % In-table horizontal line
+ & SMI & 14.42\% & 8949.86 & 5369.916 &  & \\% Content row 1
+3 & EuroStoxx50 & 13.21\% & 3433.54 & 2060.124 & 1.8\% & 2 years\\ % Content row 1
+ & S\&P500 & 15.23\% & 2438.21 & 1462.926 & &  \\% Content row 1
+  & Nikkei225 & 16.50\% & 19537.10 & 11722.260 & & \\ % Content row 1
+\bottomrule % Bottom horizontal line
+\end{tabular}
+\caption{Description of the multi-\textit{Barrier Reverse Convertibles} priced}
+\label{tab:multi-BRC-charachteristics}
+\end{table}
 
 \begin{figure}[H]
 \begin{center}
@@ -825,6 +866,8 @@ We can see that the convergence is obtained in each case, with an absolute relat
 \end{center}
 \end{figure}
 
+\section{Discussion on the results}
+
 \section{Improvement of the methodology with a volatility structure}
 \subsection{The need of a volatility structure}
 The previous methodology presents very strong and not realistic hypothesis ; for example, the choice of a model whose volatility remains constant over the whole period of pricing is not realistic. In order to improve our methodology and obtain better results, we chose to modelize the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
@@ -910,7 +953,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 
 \end{axis}
 \end{tikzpicture}
-\label{brc-swatch}
+\label{brc-swatch-delbourgo}
     \caption{Results of the pricing for a BRC on Swatch}
 \end{center}
 \end{figure}
@@ -955,7 +998,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 
 \end{axis}
 \end{tikzpicture}
-\label{brc-ubs}
+\label{brc-ubs-delbourgo}
     \caption{Results of the pricing for a BRC on UBS}
 \end{center}
 \end{figure}
@@ -999,7 +1042,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 
 \end{axis}
 \end{tikzpicture}
-\label{brc-swisscom}
+\label{brc-swisscom-delbourgo}
     \caption{Results of the pricing for a BRC on Swisscom}
 \end{center}
 \end{figure}
@@ -1041,7 +1084,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-nikkei}
+    \label{brc-smi-eurostoxx-nikkei-delbourgo}
     \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, Nikkei225}
 \end{center}
 \end{figure}
@@ -1085,7 +1128,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500}
+    \label{brc-smi-eurostoxx-sp500-delbourgo}
     \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500}
 \end{center}
 \end{figure}
@@ -1128,7 +1171,7 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500-nikkei}
+    \label{brc-smi-eurostoxx-sp500-nikkei-delbourgo}
     \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500, Nikkei225}
 \end{center}
 \end{figure}
