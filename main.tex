@@ -37,9 +37,12 @@ keepaspectratio]{background.jpg}%
 \setlength\belowcaptionskip{0.3cm}
 \setlength\abovecaptionskip{0.3cm}
 \usepackage[hang,small]{caption}
+\usepackage{subfigure}
+\usepackage{subcaption}
 \usepackage{multirow} 
 \usepackage{multicol}
 \usepackage{colortbl}
+\usepackage[demo]{graphicx}
 \usepackage{textcomp,eurosym} 
 \setlength{\headheight}{36.06802pt}
 \renewcommand{\footrulewidth}{0.4pt}
@@ -131,7 +134,25 @@ Caroline \textsc{OSTER}
 \addcontentsline{toc}{chapter}{Introduction}
 \vspace*{-2cm}
 
-STATS on BRCs in Switzerland
+Structured products represent an attractive alternative to classical securities and direct investments such as bonds, equities, commodities etc. Issued by a bank or an insurance company, they are generally composed of 2 elements, one ensuring the capital protection, and one boosting the yield. They were created to meet specific needs and can be used to reduce, mitigate and control the risks of a portfolio. In Switzerland, markets are particularly driven by structured products with CHF 190 billions invested in those kinds of securities at Swiss banks, which makes about 5\% of the total assets managed in the country \cite{SSPA}.
+
+In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity index or a basket of indices. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractivity of the product.
+
+Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of BRC p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{We use this index as a proxy for the Swiss market.}. We can see that the median return of the BRC seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
+
+\begin{figure}[H] 
+    \centering
+    \includegraphics[scale=0.35]{images/BRC_median_return.png} 
+    \caption{BRC median returns in \% in Switzerland compared with the SMI index evolution}
+    \label{fig:median-returns-BRC}
+\end{figure}
+
+The main objective of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of forward-backward stochastic differential equations to modelise and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modelisation chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
+
+First will be introduced the exact definition of a callable BRC, and then the pricing methodology used for this asset. Finally we will present our results and some possible extensions we considered.  
+
+
+
 %--------------------------------------------------------------------------
 %	Chapter 1 
 %--------------------------------------------------------------------------
@@ -196,9 +217,11 @@ To the regular (multi) BRCs can be added the callability by the issuer. This mea
 
 \chapter{Pricing Methodology with Reflected Backward Stochastic Differential Equations}
 \label{chap:pricing-methodology}
-Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with it is that the price between the begining and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time steps needed, but this would be computationally too long and too complex to be efficient.  \\
-A better solution would be to proceed in a backward manner, begining with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.\\
-Hence, the modelisation chosen here is a forward-backward stochastic differential equation system. The forward component, which only represents the diffusion of the underlyings, will be resolved in a classical way whereas solving the backward component will allow us to compute the price, taking into account the coupons and the callability at each timestep.\\
+Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with it is that the price between the begining and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time steps needed, but this would be computationally too long and too complex to be efficient.  
+
+A better solution would be to proceed in a backward manner, begining with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.
+
+Hence, the modelisation chosen here is a forward-backward stochastic differential equation system. The forward component, which only represents the diffusion of the underlyings, will be resolved in a classical way whereas solving the backward component will allow us to compute the price, taking into account the coupons and the callability at each timestep.
 
 The whole methodology will be described in this chapter. First, we will present the modelisation chosen to solve the problem considered, and justify the hypothesis made within this context. Then will be explained the forward equation resolution, the final payoff computation and the computation of the price in a backward manner.
 
@@ -321,7 +344,9 @@ Y_{t_{k}} = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_{k}}f(t_{k},
 This has to be calculated for every step in the time grid and for every simulation of the Monte Carlo method.
 \subsection{Computation of the conditional expectation}
 \label{subsec:conditional-expectation}
-The above formula shows that we have to estimate at each step the conditional expectation $\mathbb{E}(Y_{t+1}|\mathcal{F}_{t})$. The kernel regression method has been chosen in order to do so.\\
+The above formula shows that we have to estimate at each step the conditional expectation $\mathbb{E}(Y_{t+1}|\mathcal{F}_{t})$. Longstaff and Schwartz\cite{schwartz2001valuing} used for American option pricing the Least Square Monte Carlo (LSM) method, which consists in estimating the conditional expectation by regressing the payoffs on functions of the values of the state variables. The whole difficulty resides in the choice of the basis functions used for the regression. If Longstaff and Schwartz used polynomial functions for the pricing of an American put option, it has been shown that the choice of basis function is not clear and can really affect the option prices when it comes to more complex derivatives because it becomes hard to represent correctly the information available at each date\cite{moreno2003robustness}.
+
+In order to avoid those problems, a kernel regression method has been chosen to estimate the conditional expectation in our case.\\
 
 This method consists in the estimation of $\mathbb{E}(Y|X=x)$ for a given $x$. The estimator proposed by both Nadaraya\cite{nadaraya1964estimating} and Watson\cite{watson1964smooth} in 1964 is the following : $$\hat{m}_{h}(x)=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})y_{i}}{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
 with $N$ being the number of observations drawn independently.\\
@@ -416,6 +441,8 @@ $$U_{t_{k-1}}=
 \end{cases}$$
 
 And $Y_{t_{k-1}}=\min(\widetilde{Y}_{t_{k-1}},U_{t_{k-1}})$. We can define $K_{t_{k-1}}=Y_{t_{k-1}}-\widetilde{Y}_{t_{k-1}}$ so that $(K_{t})_{0\leq t\leq T}$ sticks with its definition.
+
+\newpage
 \section{Taking into account the default risk}
 The price of the asset still doesn't include the probability of default of the issuer. In order to do that we have to multiply the price by the survival probability of the issuer.\\
 
@@ -488,7 +515,7 @@ The different down-in barrier options priced with our methodology are described 
 \begin{center}
 \begin{tabular}{l c c c c c c c} 
 \cmidrule(l){1-8} 
-Case & $S_{0}$ & K & B & $$\sigma$$ & T & r & Analytical price\\ % Column names row
+Case & $S_{0}$ & K & B & $\sigma$ & T & r & Analytical price\\ % Column names row
 \midrule % In-table horizontal line
 Case 1 	&   100 &   100 &   80  & 	10\%    &   1    &   3\%    & -0.271\\
 Case 2	&   100 &   100 &	80  & 	20\%    &   1    &   3\%    & -4.69\\
@@ -551,8 +578,8 @@ Figure \ref{fig:down-in-barrier-pricing} and Table \ref{tab:barrier-option-prici
 \legend{Case 1, Case 2, Case 3, Case 4}
 \end{axis}
 \end{tikzpicture}
-    \label{fig:down-in-barrier-pricing}
     \caption{Results of the down-in barrier pricing}
+    \label{fig:down-in-barrier-pricing}
 \end{center}
 \end{figure}
 
@@ -577,7 +604,8 @@ Nb of simulations & 1 & 2 & 3 & 4\\ % Column names row
 We can see that the convergence is obtained in each case, with an absolute relative error inferior to 3\% in Case 1 and inferior to 1\% for the other cases. Results for the Case 1 seem to be less precise than the others ; this could be explained by the fact that in this case, the barrier is rarely touched and there is only a few simulations which end to a non-worthless payoff. The estimation of the conditional expectation can thus become more difficult and unprecise.
 
 \section{Results on callable BRCs}
-After having priced the down-in barrier successfully, we can now price a more complex instrument such as the \textit{Barrier Reverse Convertible}. In order to do that, the whole methodology described in \ref{chap:pricing-methodology} is now applied, that is to say that the coupons and the callability, as well as the credit risk, are now taken into account. \\
+\label{sec:callable-BRC}
+After having priced the down-in barrier successfully, we can now price a more complex instrument such as the \textit{Barrier Reverse Convertible}. In order to do that, the whole methodology described in \ref{chap:pricing-methodology} is now applied, that is to say that the coupons and the callability, as well as the credit risk, are now taken into account. The volatility chosen for the pricing is the historical volatility over the past 90 days.
 
 For this pricing, we chose three real-world \textit{Barrier Reverse Convertibles}, all uni-dimensional (\textit{i.e.} only one underlying is monitoring the barrier). Their characteristics are gathered in Table \ref{tab:uni-BRC-charachteristics} :
 
@@ -588,24 +616,25 @@ For this pricing, we chose three real-world \textit{Barrier Reverse Convertibles
 \cmidrule(l){2-7} 
 BRC & Underlying & Volatility & Strike\tablefootnote{This is also the initial level of the underlying} & Barrier Level & Coupon Rate & Maturity\\ % Column names row
 \midrule % In-table horizontal line
-1 & Swatch & 22.25\% & 474.60 & 355.95 & 1.35\% & 2 years\\ % Content row 1
-2 & UBS & 23.11\% & 16.31 & 12.23 & 1.65\% & 2 years\\ % Content row 2
-3 & Swisscom & 17.168\% & 444.30 & 399.87 & 1.5\% & 1 year\\ % Content row 3
+1 & Swatch & 22.25\% & 474.60 & 355.95 & 5.4\% p.a. & 2 years\\ % Content row 1
+2 & UBS & 23.11\% & 16.31 & 12.23 & 6.6\% p.a. & 2 years\\ % Content row 2
+3 & Swisscom & 17.168\% & 444.30 & 399.87 & 6.0\% p.a. & 1 year\\ % Content row 3
 \bottomrule % Bottom horizontal line
 \end{tabular}
 \caption{Description of the \textit{Barrier Reverse Convertibles} priced}
 \label{tab:uni-BRC-charachteristics}
 \end{table}
 
-Graphs \ref{fig:brc-swatch}, \ref{brc-ubs} and \ref{brc-swisscom} sum up the results obtained :
+We compare our result with the real market prices extracted from the UBS platform. We decided to pick the bid and the ask, which gives us a band of acceptable prices instead of a single value. Figure \ref{fig:results-BRC-pricing} sums up the results obtained on 100 simulations :
 
 \begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
-\begin{axis}[
+\centering
+\begin{minipage}[b]{0.55\textwidth}
+  \begin{tikzpicture}[scale=0.9]
+                \begin{axis}[
     title={BRC on Swatch},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=97.25, ymax=98.50,
     xtick={5000,10000,15000,20000},
@@ -631,26 +660,20 @@ Graphs \ref{fig:brc-swatch}, \ref{brc-ubs} and \ref{brc-swisscom} sum up the res
     mark=o,
     ]
     coordinates {
-    (2500,97.98387)(5000,98.15167)(7500,98.21007)(10000,98.24800)(20000,97.596942)
+    (2500,97.98387)(5000,98.15167)(7500,98.21007)(10000,98.24800)
     };
     							
 \legend{Bid, Ask, Price}
-
 \end{axis}
-\end{tikzpicture}
-\end{center}
-    \label{fig:brc-swatch}
-    \caption{Results of the pricing for a BRC on Swatch}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
-\begin{axis}[
+            \end{tikzpicture}
+  \label{fig:sub1}
+\end{minipage}%
+\begin{minipage}[b]{0.55\textwidth}
+  \begin{tikzpicture}[scale=0.9]
+                \begin{axis}[
     title={BRC on UBS},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=96.25, ymax=97.75,
     xtick={5000,10000,15000,20000},
@@ -682,20 +705,15 @@ Graphs \ref{fig:brc-swatch}, \ref{brc-ubs} and \ref{brc-swisscom} sum up the res
 \legend{Bid, Ask, Price}
 
 \end{axis}
-\end{tikzpicture}
-\label{brc-ubs}
-    \caption{Results of the pricing for a BRC on UBS}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
-\begin{axis}[
+            \end{tikzpicture}
+  \label{fig:sub2}
+\end{minipage}
+\begin{minipage}[b]{0.55\textwidth}
+  \begin{tikzpicture}[scale=0.9]
+                \begin{axis}[
     title={BRC on Swisscom},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=98.25, ymax=100,
     xtick={5000,10000,15000,20000},
@@ -726,14 +744,19 @@ Graphs \ref{fig:brc-swatch}, \ref{brc-ubs} and \ref{brc-swisscom} sum up the res
 \legend{Bid, Ask, Price}
 				
 \end{axis}
-\end{tikzpicture}
-\label{brc-swisscom}
-    \caption{Results of the pricing for a BRC on Swisscom}
-\end{center}
+            \end{tikzpicture}
+  \label{fig:sub2}
+\end{minipage}
+\caption{Results of the pricing on callable BRCs}
+\label{fig:results-BRC-pricing}
 \end{figure}
+\newpage
+For the two first \textit{Barrier Reverse Convertibles}, the price seems to be slightly overestimated. This could be due to the fact that the maturity is longer than for the last one, thus accumulating more errors in the backward resolution. It is also worth noting that in the second case, the price converges very early ; this could be due to the fact that the product is always called because of a high coupon rate and early callable dates. Indeed, if there is a lot of coupons with a high rate expected after the last callable date, this will increase the expected future value of the product and encourage the issuer to call it.
+
 
 \section{Results on multi callable BRCs}
-We now apply the pricing methodology on multi-callable \textit{Barrier Reverse Convertibles}. We chose three assets that are described in Table \ref{tab:multi-BRC-charachteristics} :
+\label{sec:multi-BRC-description}
+We now apply the pricing methodology on multi-callable \textit{Barrier Reverse Convertibles}. We chose only "WorstOf" assets because they represent a greater part of the BRC market and it is thus easier to find reliable datas to compare with. Their descriptions are gathered in Table \ref{tab:multi-BRC-charachteristics} :
 
 \begin{table}[H]
 \centering
@@ -743,15 +766,15 @@ We now apply the pricing methodology on multi-callable \textit{Barrier Reverse C
 BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial level of the underlying} & Barrier Level & Coupon Rate & Maturity\\ % Column names row
 \midrule % In-table horizontal line
  & SMI & 14.42\% & 8940.46 & 5364.276 & & \\ % Content row 1
-1 & EuroStoxx50 & 13.21\% & 3573.76 & 2144.256 & 2.0\% & 3 years\\ % Content row 1
+1 & EuroStoxx50 & 13.21\% & 3573.76 & 2144.256 & 4.0\% p.a. & 3 years\\ % Content row 1
  & Nikkei225 & 16.50\% & 22930.36 & 13758.216 &  &\\ % Content row 1
  \midrule % In-table horizontal line
  & SMI & 14.42\% & 8824.56 & 4324.03 &  & \\ % Content row 1
-2 & EuroStoxx50 & 13.21\% & 3269.63 & 1602.12 & 3.24\% & 1 year\\ % Content row 1
+2 & EuroStoxx50 & 13.21\% & 3269.63 & 1602.12 & 3.24\% p.a. & 1 year\\ % Content row 1
  & S\&P500 & 15.23\% & 1972.18 & 966.37 & & \\ % Content row 1
 \midrule % In-table horizontal line
  & SMI & 14.42\% & 8949.86 & 5369.916 &  & \\% Content row 1
-3 & EuroStoxx50 & 13.21\% & 3433.54 & 2060.124 & 1.8\% & 2 years\\ % Content row 1
+3 & EuroStoxx50 & 13.21\% & 3433.54 & 2060.124 & 3.6\% p.a. & 2 years\\ % Content row 1
  & S\&P500 & 15.23\% & 2438.21 & 1462.926 & &  \\% Content row 1
   & Nikkei225 & 16.50\% & 19537.10 & 11722.260 & & \\ % Content row 1
 \bottomrule % Bottom horizontal line
@@ -760,13 +783,36 @@ BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial l
 \label{tab:multi-BRC-charachteristics}
 \end{table}
 
+The correlations used for the pricings are computed with the historical datas of the past 2 years. They are summarized in Table \ref{tab:corr}.
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c c c c c} 
+& SMI & EuroStoxx50 & S\&P500 & Nikkei225\\ % Column names row
+\midrule % In-table horizontal line
+SMI & 1.0 & 0.801 & 0.258 & 0.466 \\ % Content row 1
+ \midrule % In-table horizontal line
+EuroStoxx50 & & 1.0 & 0.493 & 0.315 \\ % Content row 1
+\midrule % In-table horizontal line
+S\&P500 & & & 1.0 & 0.111 \\ % Content row 1
+\midrule % In-table horizontal line
+Nikkei225 & & & & 1.0 \\ % Content row 1
+\bottomrule % Bottom horizontal line
+\end{tabular}
+\caption{Correlations of the underlyings}
+\label{tab:corr}
+\end{table}
+
+Again, we compare our results with the real bid and ask extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the results obtained on 100 simulations :
+
 \begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\centering
+\begin{minipage}[b]{0.6\textwidth}
+  \begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=35000,
     ymin=97, ymax=99,
     xtick={5000,10000,15000,20000,25000,30000,35000},
@@ -797,19 +843,14 @@ BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial l
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-nikkei}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, Nikkei225}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+  \label{fig:sub1}
+\end{minipage}%
+\begin{minipage}[b]{0.6\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=30000,
     ymin=101.5, ymax=103.5,
     xtick={5000,10000,15000,20000,25000,30000,30000},
@@ -841,19 +882,13 @@ BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial l
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\end{minipage}
+\begin{minipage}[b]{0.5\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=40000,
     ymin=98.5, ymax=99.75,
     xtick={5000,10000,15000,20000,25000,30000,35000,40000},
@@ -884,16 +919,26 @@ BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial l
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500-nikkei}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500, Nikkei225}
-\end{center}
+\end{minipage}
+\caption{Results of the pricing on callable BRCs}
+\label{fig:results-multi-BRC-pricing}
 \end{figure}
 
-\section{Discussion on the results}
+Here the results seem to be quite overestimated compared to the real market bid-ask. Though, the errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain coherent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
+
+\section{Conclusion on the results}
+The overall results of the pricing methodology are quite satisfying and tend to reproduce the market price with low errors. Nevertheless, they are always overestimated when it comes to more complex assets (longer maturity, several underlyings etc). This shows that our methodology presents some flaws and could be improved in many ways, considering more realistic hypothesis and taking into account some other important aspects of the market :
+\begin{itemize}
+    \item In the Black-Scholes model, the volatility is constant over the whole period of pricing, which does not reflect the reality of the market. An other model for the underlyings could be used, such as a local volatility model or a stochastic volatility model. A term structure could also be considered.
+    \item Taking liquidity risk into account could have a real impact and help to adjust the price downwards as the market of BRCs is a very specific market, mainly concentrated in Switzerland.
+    \item Transaction costs are also to be considered for a more accurate pricing.
+\end{itemize}
+
+Moreover, our results show that the pricing methodology lacks accuracy for corner cases and could be improved in this way considering for example a better way to compute the conditional expectation in the backward resolution formula (we could consider a more sophisticated way to deal with the bandwidth parameter $h$, which has a great influence on the kernel estimation).
 
 \section{Improvement of the methodology with a volatility structure}
 \subsection{The need of a volatility structure}
-The previous methodology presents very strong and not realistic hypothesis ; for example, the choice of a model whose volatility remains constant over the whole period of pricing is not realistic. In order to improve our methodology and obtain better results, we chose to modelize the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
+In order to improve our methodology and obtain better results, we chose to modelize the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
 
 \subsection{Gregory-Delbourgo interpolation}
 This rational quadratic spline interpolation has been presented by Gregory \& Delbourgo in \cite{gregory1982piecewise}. The main advantage of such an interpolation is that it provides an interpolant of continuity class $C^1$ and that it preserves the shape of the initial data set. Note that this interpolation only works for a strictly monotonic set of points $(x_i,f_i)$, for $i=1,\ldots,n$. \\
@@ -903,25 +948,28 @@ $$\forall i=1,\ldots,n, s(x_i)=f_i$$
 
 Let us write $h_i=x_{i+1}-x_i$, $\theta=\frac{x-x_i}{h_i}$ and $\Delta_i=\frac{f_{i+1}-f_i}{h_i}$
 
-We can define, for $i=2,\ldots,n-1$: $$d_i = \begin{cases}
+We can define, for $i=2,\ldots,n-1$: 
+
+$$d_i = \begin{cases}
 0 & \text{if } f_{i+1}=f_i \\
 \frac{\Delta_i\Delta_{i-1}}{(f_{i+1}-f_{i-1})(x_{i+1}-x_{i-1})} & \text{otherwise }
 \end{cases}$$
-
+\vspace{0.2cm}
 And 
+\vspace{0.2cm}
 $$d_1 = \begin{cases}
 0 & \text{if } f_{1}=f_2 \\
 \frac{\Delta_1^2}{(f_{3}-f_{1})(x_{3}-x_{1})} & \text{otherwise }
 \end{cases}$$
-
+\vspace{0.2cm}
 $$d_n = \begin{cases}
 0 & \text{if } f_{n-1}=f_n \\
 \frac{\Delta_{n-1}^2}{(f_{n}-f_{n-2})(x_{n}-x_{n-2})} & \text{otherwise }
 \end{cases}$$
-
+\newpage
 We then have, for $x\in [x_i;x_{i+1}]$ : $$s(x) = f_i + \frac{(f_{i+1}-f_{i})(\Delta_i\theta^2+d_i\theta(1-\theta))}{\Delta_i+(d_{i+1}+d_i-2\Delta_i)\theta(1-\theta)}$$
 
-This can be rewrite like this :
+This can be rewritten like this :
 $$s(x)=\frac{f_{i+1}\theta^2 + \Delta_i^{-1}(f_{i+1}d_i+f_id_{i+1})\theta(1-\theta)+f_i(1-\theta)^2}{\theta^2+\Delta_i^{-1}(d_{i+1}+d_i)\theta(1-\theta)+(1-\theta)^2}$$
 
 For $0 \leq \theta \leq 1$, the denominator is always positive. Furthermore, we can differentiate $s$ for $x\in[x_i;x_{i+1}]$ :
@@ -929,15 +977,21 @@ $$s^{(1)}(x) = \frac{d_{i+1}\theta^2+2\Delta_i\theta(1-\theta+d_i(1-\theta)^2)}{
 
 We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $s^{(1)}(x)>0$, which was expected.
 
+This interpolation working only for a strictly monotonic set of points, we apply it on the term structure $t \mapsto \sigma^2 t$ (which generally satisfies this hypothesis). The advantage of such an interpolation compared with a polynomial interpolation is that it avoids oscillating phenomenons\footnote{One can think of the Runge exemple presented in \cite{quarteroni2000methodes} which shows the divergence of the Lagrange interpolation at the extremity of the interval considered with polynomial functions of high degree for certain functions such as $x \mapsto \frac{1}{1+x^2}$.} due to equidistant nodes. Nevertheless, interpolation splines can sometimes present oscillations because of too high derivatives \cite{quarteroni2000methodes}, which does not seem to be the case in our volatility term structure. 
+
 \subsection{Results}
+In order to have comparable results, we decided to price again the 6 BRCs presented in the previous sections. The only change is that we used a volatility term structure based on historical volatilities (provided by the Bloomberg platform) and interpolated the values needed for the diffusion of the underlyings and for the estimation of the conditional expectations with the Gregory-Delbourgo interpolation.\\
+
+Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pricing for the callable BRCs described in \ref{sec:callable-BRC}. Again, those results represent the mean on 100 simulations.
 
 \begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\centering
+\begin{minipage}[b]{0.6\textwidth}
+ \begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on Swatch},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=97.25, ymax=98.50,
     xtick={5000,10000,15000,20000},
@@ -965,24 +1019,17 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
     coordinates {
     (2500,97.30292)(5000,97.46841)(7500,97.52690)(10000,97.56498)(20000,97.599087)
     };
-  				  							
 \legend{Bid, Ask, Price}
-
 \end{axis}
 \end{tikzpicture}
-\label{brc-swatch-delbourgo}
-    \caption{Results of the pricing for a BRC on Swatch}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+  \label{fig:sub1}
+\end{minipage}%
+\begin{minipage}[b]{0.6\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on UBS},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=96.25, ymax=99,
     xtick={5000,10000,15000,20000},
@@ -1015,19 +1062,13 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 
 \end{axis}
 \end{tikzpicture}
-\label{brc-ubs-delbourgo}
-    \caption{Results of the pricing for a BRC on UBS}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\end{minipage}
+\begin{minipage}[b]{0.5\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on Swisscom},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=20000,
     ymin=98.25, ymax=100,
     xtick={5000,10000,15000,20000},
@@ -1059,18 +1100,27 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 				
 \end{axis}
 \end{tikzpicture}
-\label{brc-swisscom-delbourgo}
-    \caption{Results of the pricing for a BRC on Swisscom}
-\end{center}
+\end{minipage}
+\caption{Results of the pricing on callable BRCs with the Gregory-Delbourgo interpolation}
+\label{fig:results-BRC-pricing-Delbourgo}
 \end{figure}
 
+As before, the pricing methodology seems to converge but now the results are slightly different. Indeed, for the first BRC, the convergence price has decreased and is now more relevant compared to the bid and the ask prices. Nevertheless, for the second BRC, the price has increased and moved away from the bid-ask.
+
+This shows that the way we represent the volatility in our model is quite important as it comes to long maturity assets and that the hypothesis of a constant volatility is not relevant in those cases. The differences of behavior between both BRCs could be due to the fact that using a term-structure does not influence the volatility the same way ; in the first case, the volatility is revised upwards, which makes the barrier hit more often and thus the price smaller, whereas in the second case, it is corrected downwards which makes the price of the underlying more stable and the asset price higher. \\
+
+On the contrary, let us notice that for the assets with shorter maturity (like the last one), the term-structure of the volatility does not imply much changes in the price. This seems coherent in the sense that volatility moves over the time have less influence in a short-term horizon.\\
+
+Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean on 100 simulations) of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
+
 \begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\centering
+\begin{minipage}[b]{0.6\textwidth}
+  \begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=35000,
     ymin=97, ymax=99,
     xtick={5000,10000,15000,20000,25000,30000,35000},
@@ -1101,19 +1151,14 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-nikkei-delbourgo}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, Nikkei225}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+  \label{fig:sub1}
+\end{minipage}%
+\begin{minipage}[b]{0.6\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=30000,
     ymin=101.5, ymax=103.5,
     xtick={5000,10000,15000,20000,25000,30000,30000},
@@ -1145,19 +1190,13 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500-delbourgo}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500}
-\end{center}
-\end{figure}
-
-
-\begin{figure}[H]
-\begin{center}
-\begin{tikzpicture}[yscale=0.9][xscale=0.8]
+\end{minipage}
+\begin{minipage}[b]{0.5\textwidth}
+\begin{tikzpicture}[scale=0.8]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Relative error (\%)},
+    ylabel={Price (\%)},
     xmin=0, xmax=40000,
     ymin=98.5, ymax=99.75,
     xtick={5000,10000,15000,20000,25000,30000,35000,40000},
@@ -1188,17 +1227,22 @@ We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
-    \label{brc-smi-eurostoxx-sp500-nikkei-delbourgo}
-    \caption{Results of the pricing for a multi BRC on SMI, EuroStoxx50, S\&P500, Nikkei225}
-\end{center}
+\end{minipage}
+\caption{Results of the pricing on callable multi-BRCs with the Gregory-Delbourgo interpolation}
+\label{fig:results-multi-BRC-pricing-delourgo}
 \end{figure}
 
+\newpage
+COMMENTAIRES SUR LES RESULTATS
+
+\subsection{Conclusion}
 %--------------------------------------------------------------------------
 %	Conclusion
 %-----------------------------------------------------------------------
 \backmatter
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
+
 
 
 %%%%%%%%
