@@ -24,6 +24,7 @@
 \usepackage{color}
 \usepackage[most]{tcolorbox}
 \usepackage{pgfplots}
+  \pgfplotsset{compat=1.13}
 \usepackage{xcolor}
 \newcommand\BackgroundPic{%
 \put(0,0){%
@@ -105,7 +106,7 @@ keepaspectratio]{background.jpg}%
 \end{figure}
 % Title
 \rule{\linewidth}{0.5mm} \\[0.4cm]
-{ \LARGE \bfseries Pricing callable BRCs with Reflected Backward Stochastic Differential Equations \\
+{ \LARGE \bfseries Pricing callable Barrier Reverse Convertibles with a Reflected Forward-Backward Stochastic Differential Equations System \\
 }
 \rule{\linewidth}{0.5mm} \\[1cm]
 
@@ -138,16 +139,16 @@ Structured products represent an attractive alternative to classical securities 
 
 In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity index or a basket of indices. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractivity of the product.
 
-Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of BRC p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{We use this index as a proxy for the Swiss market.}. We can see that the median return of the BRC seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
+Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{We use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
 
 \begin{figure}[H] 
     \centering
-    \includegraphics[scale=0.35]{images/BRC_median_return.png} 
+    \includegraphics[scale=0.4]{images/BRC_median_return.png} 
     \caption{BRC median returns in \% in Switzerland compared with the SMI index evolution}
     \label{fig:median-returns-BRC}
 \end{figure}
 
-The main objective of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of forward-backward stochastic differential equations to modelise and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modelisation chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
+The main objective of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of reflected forward-backward stochastic differential equations to modelise and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modelisation chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
 
 First will be introduced the exact definition of a callable BRC, and then the pricing methodology used for this asset. Finally we will present our results and some possible extensions we considered.  
 
@@ -539,9 +540,10 @@ Figure \ref{fig:down-in-barrier-pricing} and Table \ref{tab:barrier-option-prici
     title={Down-in barrier option pricing},
     xlabel={Number of simulations},
     ylabel={Relative error (\%)},
-    xmin=0, xmax=10000,
+    xmin=0, xmax=1,
     ymin=-6, ymax=1,
-    xtick={2500,5000,7500,10000},
+    xtick={.25,.50,.75,1.00},
+    xticklabels={2500,5000,7500,10000},
     ytick={-6,-5,-4,-3,-2,-1,0,1},
     legend pos=south east,
     ymajorgrids=true,
@@ -552,28 +554,28 @@ Figure \ref{fig:down-in-barrier-pricing} and Table \ref{tab:barrier-option-prici
     mark=o,
     ]
     coordinates {
-    (1000,-3.57)(2500,-3.53)(5000,-3.10)(7500,-2.58)(10000,-2.59)
+    (.1,-3.57)(.25,-3.53)(.5,-3.10)(.75,-2.58)(1,-2.59)
     };
 \addplot[
     color=blue,
     mark=o,
     ]
     coordinates {
-    (1000,-0.98)(2500,-0.85)(5000,-0.74)(7500,-0.53)(10000,-0.54)
+    (.1,-0.98)(.25,-0.85)(.5,-0.74)(.75,-0.53)(1,-0.54)
     };
 \addplot[
     color=green,
     mark=o,
     ]
     coordinates {
-    (1000,-0.46)(2500,-0.33)(5000,-0.30)(7500,-0.27)(10000,-0.31)
+    (.1,-0.46)(.25,-0.33)(.5,-0.30)(.75,-0.27)(1,-0.31)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (1000,-0.67)(2500,-0.55)(5000,-0.55)(7500,-0.44)(10000,-0.47)
+    (.1,-0.67)(.25,-0.55)(.5,-0.55)(.75,-0.44)(1,-0.47)
     };
 \legend{Case 1, Case 2, Case 3, Case 4}
 \end{axis}
@@ -635,9 +637,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on Swatch},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2,
     ymin=97.25, ymax=98.50,
-    xtick={5000,10000,15000,20000},
+    xtick={.5,1,1.5,2},
+    xticklabels={5000,10000,15000,20000},
     ytick={97.25,97.50,97.75,98.0,98.25,98.50},
     legend pos=south east,
     ymajorgrids=true,
@@ -647,20 +650,20 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,97.31)(20000,97.31)
+    (0,97.31)(2,97.31)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,98.31)(20000,98.31)
+    (0,98.31)(2,98.31)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,97.98387)(5000,98.15167)(7500,98.21007)(10000,98.24800)
+    (.25,97.98387)(.5,98.15167)(.75,98.21007)(1,98.24800)
     };
     							
 \legend{Bid, Ask, Price}
@@ -674,9 +677,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on UBS},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2,
     ymin=96.25, ymax=97.75,
-    xtick={5000,10000,15000,20000},
+    xtick={.50,1.00,1.50,2.00},
+    xticklabels={5000,10000,15000,20000},
     ytick={96.25,96.50,96.75,97.0,97.25,97.50,97.75,98.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -686,20 +690,20 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,96.37)(20000,96.37)
+    (0,96.37)(2.00,96.37)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,97.37)(20000,97.37)
+    (0,97.37)(2.00,97.37)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (1000,97.4725301462994)(2500,97.51114)(5000,97.50031)(7500,97.49034)(10000,97.49501)(20000,97.483500)
+    (.10,97.4725301462994)(.25,97.51114)(.50,97.50031)(.75,97.49034)(1.00,97.49501)(2.00,97.483500)
     };
   							  							
 \legend{Bid, Ask, Price}
@@ -714,9 +718,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on Swisscom},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2,
     ymin=98.25, ymax=100,
-    xtick={5000,10000,15000,20000},
+    xtick={.50,1.00,1.50,2.00},
+    xticklabels={5000,10000,15000,20000},
     ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -726,20 +731,20 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,98.68)(20000,98.68)
+    (0,98.68)(2.00,98.68)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,99.68)(20000,99.68)
+    (0,99.68)(2.00,99.68)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,98.79471)(5000,98.91070)(7500,98.94420)(10000,98.95531)(20000,98.978825)
+    (.25,98.79471)(.50,98.91070)(.75,98.94420)(1.00,98.95531)(2.00,98.978825)
     };
 \legend{Bid, Ask, Price}
 				
@@ -803,120 +808,80 @@ Nikkei225 & & & & 1.0 \\ % Content row 1
 \label{tab:corr}
 \end{table}
 
-Again, we compare our results with the real bid and ask extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the results obtained on 100 simulations :
+Again, we compare our results with the real bid and ask extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the average absolute error obtained on 20 simulations :
 
 \begin{figure}[H]
 \centering
 \begin{minipage}[b]{0.6\textwidth}
-  \begin{tikzpicture}[scale=0.8]
+  \begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=35000,
-    ymin=97, ymax=99,
-    xtick={5000,10000,15000,20000,25000,30000,35000},
-    ytick={97.0,97.25,97.5,97.75,98,98.25,98.5,98.75,99},
+    ylabel={Absolute error},
+    xmin=0, xmax=1.00,
+    ymin=0.5, ymax=1.2,
+    xtick={.25,.50,.75,1.00},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,97.12)(35000,97.12)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,97.9)(35000,97.9)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,98.118750)(5000,98.222870)(7500,98.350130)(10000,98.425353)(20000,98.478750)(25000,98.45757)(30000,98.40819)(35000,98.44820)
+    (.05,0.958509)(.10,0.905319)(.25,0.848922)(.50,0.837590)(.75,0.831052)(1.00,0.834020)
     };
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
   \label{fig:sub1}
 \end{minipage}%
 \begin{minipage}[b]{0.6\textwidth}
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=30000,
-    ymin=101.5, ymax=103.5,
-    xtick={5000,10000,15000,20000,25000,30000,30000},
-    ytick={101.5,101.75,102,102.25,102.5,102.75,103,103.25,103.5},
+    ylabel={Absolute error},
+    xmin=0, xmax=1.00,
+    ymin=0.5, ymax=1.5,
+    xtick={.25,.50,.75,1.00},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,101.61)(35000,101.61)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,102.11)(35000,102.11)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,103.1411028)(5000,103.1517035)(7500,103.1552361)(10000,103.1570022)(20000,103.15965)(25000,103.16018)(30000,103.16053)
+    (.05,1.302299943)(.10,1.299651357)(.25,1.301240509)(.50,1.30124122)(.75,1.301594128)(1.00,1.301434168)
     };
-    						
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
 \begin{minipage}[b]{0.5\textwidth}
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=40000,
-    ymin=98.5, ymax=99.75,
-    xtick={5000,10000,15000,20000,25000,30000,35000,40000},
-    ytick={98.5,98.75,99,99.25,99.5,99.75},
+    ylabel={Absolute error},
+    xmin=0, xmax=1.00,
+    ymin=0.5, ymax=1,
+    xtick={.25,.50,.75,1.00},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,98.57)(40000,98.57)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,99.43)(40000,99.43)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,99.59246987)(5000,99.60809215)(7500,99.58864458)(10000,99.61014605)(20000,99.683560)(25000,99.679430)(30000,99.701340)(35000,99.722940)(40000,99.710480)
+    (.05,0.8086966708)(.10,0.8022905231)(.25,0.7458102771)(.50,0.749307644)(.75,0.7470657638)(1.00,0.7439713738)
     };
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -924,7 +889,7 @@ Again, we compare our results with the real bid and ask extracted from the UBS p
 \label{fig:results-multi-BRC-pricing}
 \end{figure}
 
-Here the results seem to be quite overestimated compared to the real market bid-ask. Though, the errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain coherent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
+The errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain coherent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
 
 \section{Conclusion on the results}
 The overall results of the pricing methodology are quite satisfying and tend to reproduce the market price with low errors. Nevertheless, they are always overestimated when it comes to more complex assets (longer maturity, several underlyings etc). This shows that our methodology presents some flaws and could be improved in many ways, considering more realistic hypothesis and taking into account some other important aspects of the market :
@@ -936,8 +901,8 @@ The overall results of the pricing methodology are quite satisfying and tend to 
 
 Moreover, our results show that the pricing methodology lacks accuracy for corner cases and could be improved in this way considering for example a better way to compute the conditional expectation in the backward resolution formula (we could consider a more sophisticated way to deal with the bandwidth parameter $h$, which has a great influence on the kernel estimation).
 
-\section{Improvement of the methodology with a volatility structure}
-\subsection{The need of a volatility structure}
+\section{Improvement of the methodology with a volatility term structure}
+\subsection{The need of a volatility term structure}
 In order to improve our methodology and obtain better results, we chose to modelize the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
 
 \subsection{Gregory-Delbourgo interpolation}
@@ -992,9 +957,10 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on Swatch},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2.00,
     ymin=97.25, ymax=98.50,
-    xtick={5000,10000,15000,20000},
+    xtick={.50,1.00,1.50,2.00},
+    xticklabels={5000,10000,15000,20000},
     ytick={97.25,97.50,97.75,98.0,98.25,98.50},
     legend pos=north east,
     ymajorgrids=true,
@@ -1004,20 +970,20 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,97.31)(20000,97.31)
+    (0,97.31)(2.00,97.31)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,98.31)(20000,98.31)
+    (0,98.31)(2.00,98.31)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,97.30292)(5000,97.46841)(7500,97.52690)(10000,97.56498)(20000,97.599087)
+    (.25,97.30292)(.50,97.46841)(.75,97.52690)(1.00,97.56498)(2.00,97.599087)
     };
 \legend{Bid, Ask, Price}
 \end{axis}
@@ -1030,9 +996,10 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on UBS},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2.00,
     ymin=96.25, ymax=99,
-    xtick={5000,10000,15000,20000},
+    xtick={.50,1.00,1.50,2.00},
+    xticklabels={5000,10000,15000,20000},
     ytick={96.50,97.0,97.50,98.0,98.5,99},
     legend pos=south east,
     ymajorgrids=true,
@@ -1042,20 +1009,20 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,96.37)(20000,96.37)
+    (0,96.37)(2.00,96.37)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,97.37)(20000,97.37)
+    (0,97.37)(2.00,97.37)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (1000,98.6587530478919)(2500,98.68647)(5000,98.67670)(7500,98.66755)(10000,98.67211)(20000,98.660945)
+    (.10,98.6587530478919)(.25,98.68647)(.5,98.67670)(.75,98.66755)(1.00,98.67211)(2.00,98.660945)
     };
    				 							
 \legend{Bid, Ask, Price}
@@ -1069,9 +1036,10 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on Swisscom},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=20000,
+    xmin=0, xmax=2.00,
     ymin=98.25, ymax=100,
-    xtick={5000,10000,15000,20000},
+    xtick={.50,1.00,1.50,2.00},
+    xticklabels={5000,10000,15000,20000},
     ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -1081,20 +1049,20 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,98.68)(20000,98.68)
+    (0,98.68)(2.00,98.68)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,99.68)(20000,99.68)
+    (0,99.68)(2.00,99.68)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,99.11909)(5000,99.22453)(7500,99.25563)(10000,99.26520)(20000,99.285241)
+    (.25,99.11909)(.50,99.22453)(.75,99.25563)(1.00,99.26520)(2.00,99.285241)
     };
 \legend{Bid, Ask, Price}
 				
@@ -1111,7 +1079,7 @@ This shows that the way we represent the volatility in our model is quite import
 
 On the contrary, let us notice that for the assets with shorter maturity (like the last one), the term-structure of the volatility does not imply much changes in the price. This seems coherent in the sense that volatility moves over the time have less influence in a short-term horizon.\\
 
-Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean on 100 simulations) of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
+Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean on 20 simulations) of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
 
 \begin{figure}[H]
 \centering
@@ -1120,35 +1088,22 @@ Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean o
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=35000,
-    ymin=97, ymax=99,
-    xtick={5000,10000,15000,20000,25000,30000,35000},
-    ytick={97.0,97.25,97.5,97.75,98,98.25,98.5,98.75,99},
+    ylabel={Absolute error},
+    xmin=0, xmax=1,
+    ymin=0.5, ymax=1.2,
+    xtick={.25,.5,.75,1},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,97.12)(35000,97.12)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,97.9)(35000,97.9)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,98.118750)(5000,98.222870)(7500,98.350130)(10000,98.425353)(20000,98.478750)(25000,98.45757)(30000,98.40819)(35000,98.44820)
+    (0.05,1.033743)(0.1,0.986679)(0.25,0.934055)(0.5,0.921570)(0.75,0.910942)(1,0.913366)
     };
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
   \label{fig:sub1}
@@ -1158,36 +1113,22 @@ Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean o
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=30000,
-    ymin=101.5, ymax=103.5,
-    xtick={5000,10000,15000,20000,25000,30000,30000},
-    ytick={101.5,101.75,102,102.25,102.5,102.75,103,103.25,103.5},
+    ylabel={Absolute error},
+    xmin=0, xmax=1,
+    ymin=0.5, ymax=1.5,
+    xtick={.25,.5,.75,1},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,101.61)(35000,101.61)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,102.11)(35000,102.11)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,103.1411028)(5000,103.1517035)(7500,103.1552361)(10000,103.1570022)(20000,103.15965)(25000,103.16018)(30000,103.16053)
+    (0.05,1.297225801)(0.1,1.296571389)(0.25,1.300008522)(0.5,1.299987037)(0.75,1.300562321)(1,1.300693021)
     };
-    						
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -1196,52 +1137,47 @@ Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean o
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Price (\%)},
-    xmin=0, xmax=40000,
-    ymin=98.5, ymax=99.75,
-    xtick={5000,10000,15000,20000,25000,30000,35000,40000},
-    ytick={98.5,98.75,99,99.25,99.5,99.75},
+    ylabel={Absolute error},
+    xmin=0, xmax=1,
+    ymin=0, ymax=0.5,
+    xtick={.25,.5,.75,1},
+    xticklabels={2500,5000,7500,10000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
-    color=blue,
-    ]
-    coordinates {
-    (0,98.57)(40000,98.57)
-    };
-\addplot[
-    color=red,
-    ]
-    coordinates {
-    (0,99.43)(40000,99.43)
-    };
-\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (2500,99.59246987)(5000,99.60809215)(7500,99.58864458)(10000,99.61014605)(20000,99.683560)(25000,99.679430)(30000,99.701340)(35000,99.722940)(40000,99.710480)
+    (0.05,0.4649321346)(0.1,0.4267946956)(0.25,0.3862498482)(0.5,0.3679566489)(0.75,0.3676131956)(1,0.3731876314)
     };
-\legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Results of the pricing on callable multi-BRCs with the Gregory-Delbourgo interpolation}
+\caption{Results of the pricing on callable BRCs}
 \label{fig:results-multi-BRC-pricing-delourgo}
 \end{figure}
 
 \newpage
-COMMENTAIRES SUR LES RESULTATS
+Again, the results are slightly different from the ones without the volatility term structure. Indeed, for the first BRC, the absolute error has softly increased whereas it has diminished by half for the third BRC. However, the problem of the second BRC whose barrier was never touched has not been resolved since the price is still constant and reflects the bond price.
 
 \subsection{Conclusion}
+Adding a term structure to the volatility has mitigated results. For some cases, it makes the pricing more accurate but it does not solve the default of precision present in corner cases (when the barrier is barely touched). However, considering the results on uni-dimensional BRCs, it seems obvious that a constant volatility is not enough to reproduce the real behavior of the volatility and that a more complex model is necessary for an accurate pricing. 
+
 %--------------------------------------------------------------------------
 %	Conclusion
 %-----------------------------------------------------------------------
 \backmatter
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
+The main objective of this report was the pricing of a structured product called \textit{Callable Barrier Reverse Convertible}. This kind of asset presents too much complexity (continuous barrier component on potentially several underlyings, coupons, presence of dates of possible call by the issuer), to prevent us to use a basic pricing methodology such as a Monte Carlo method. The modelisation chosen was a reflected forward-backward stochastic differential equation system under the Black-Scholes model. The resolution of such a SDE system leads to the price of the asset in a backward manner, which allows us to take into account all the particularities of the callable BRC. If this methodology is close to the Longstaff-Schwartz algorithm used for the pricing of American options, different choices had to be made due to the complexity of the asset, such as the use of a kernel regression instead of the LSM method in the estimation of the conditional expectations.
+
+The quality of the results depends on several factors. For example, the longer the maturity of the asset, the less precise the price. The number of underlyings also plays a role in the accuracy of the results. Globally, the price we obtain is slightly overestimated compared with the bid and ask prices. This could be due to the flaws of our methodology and the unrealistic assumptions we made, but also to the kernel regression (which raises the question of a better bandwidth choice) that can affect the precision in the corner cases.
+
+In order to improve our results, we added a term-structure to the volatility, picking up the values for different tenors on Bloomberg and interpolating between those tenors with a rational quadratic spline interpolation. The results are rather mitigated ; if simple BRC's prices are more accurately estimated, this improvement of the methodology does not seem to evict the difficulties to estimate low barrier prices. Further research should then focus on a better conditional expectation estimation as well as volatility modelisation in order to improve the pricing.
+
 
 
 
