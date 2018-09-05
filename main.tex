@@ -135,9 +135,9 @@ Caroline \textsc{OSTER}
 \addcontentsline{toc}{chapter}{Introduction}
 \vspace*{-2cm}
 
-Structured products represent an attractive alternative to classical securities and direct investments such as bonds, equities, commodities etc. Issued by a bank or an insurance company, they are generally composed of 2 elements, one ensuring the capital protection, and one boosting the yield. They were created to meet specific needs and can be used to reduce, mitigate and control the risks of a portfolio. In Switzerland, markets are particularly driven by structured products with CHF 190 billions invested in those kinds of securities at Swiss banks, which makes about 5\% of the total assets managed in the country \cite{SSPA}.
+Structured products represent an attractive alternative to classical securities and direct investments such as bonds, equities, commodities etc. Issued by a bank or by an insurance company, they are generally composed of 2 elements, one ensuring the capital protection, and one boosting the yield. They were created to meet specific needs and can be used to reduce, mitigate and control the risks of a portfolio. In Switzerland, markets are particularly driven by structured products with CHF 190 billions invested in those kinds of securities at Swiss banks, which makes about 5\% of the total assets managed in the country \cite{SSPA}.
 
-In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity index or a basket of indices. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractiveness of the product.
+In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity or an index. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractiveness of the product.
 
 Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{We use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
 
@@ -148,7 +148,7 @@ Reverse convertible securities are among the most popular products in Switzerlan
     \label{fig:median-returns-BRC}
 \end{figure}
 
-The main objective of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of reflected forward-backward stochastic differential equations to model and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modeling chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
+The main concern of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of reflected forward-backward stochastic differential equations to model and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modeling chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
 
 First will be introduced the exact definition of a callable BRC, and then the pricing methodology used for this asset. Finally we will present our results and some possible extensions we considered.  
 
@@ -163,7 +163,7 @@ First will be introduced the exact definition of a callable BRC, and then the pr
 \chapter{Description of a callable barrier reverse convertible}
 
 \section{Definition of a Standard Reverse Convertible}
-In order to understand what a Barrier Reverse Convertible is, we will first give a brief definition of a Standard Reverse Convertible : this kind of financial instrument is a bond-like security which pays a coupon that is generally very high compared to the risk-free interest rate. This bond is combined with a short put option, as can be seen in \ref{fig:RC-payoff}.
+In order to understand what a Barrier Reverse Convertible is, we will first give a brief definition of a Standard Reverse Convertible : this kind of financial instrument is a bond-like security which pays a coupon that is generally very high compared to the "risk-free" interest rate. This bond is combined with a short put option, as can be seen in \ref{fig:RC-payoff}.
 
 \begin{figure}[!h]
     \centering
@@ -172,9 +172,9 @@ In order to understand what a Barrier Reverse Convertible is, we will first give
     \label{fig:RC-payoff}
 \end{figure}
 
-The payment is made as follows : if the price of the underlying ends above the strike at maturity, the nominal is given back as the final payoff. In this case, the final payoff is called the cap. On the contrary, if the price of the underlying ends under the strike at maturity, the final payoff is the cap reduced by the difference between the strike and the final price. All the coupons are paid during the lifetime of the asset.\\
+The payment is made as follows: if the price of the underlying ends above the strike at maturity, the nominal is given back as the final payoff. In this case, the final payoff is called the cap. On the contrary, if the price of the underlying ends under the strike at maturity, the final payoff is the cap reduced by the difference between the strike and the final price. All the coupons are paid during the lifetime of the asset.\\
 
-Let us denote $K$ the strike of the asset and $S_{T}$ the price of the underlying at maturity $T$. The final payoff $P$ can hence been expressed as follows :
+Let us denote $K$ the strike of the asset, $T$ the maturity and $S_{t}$ the level of the underlying at time $t$. The final payoff $P$ can hence been expressed as follows :
 $P=\text{cap}-(K-S_{T})_{+}$.\\
 
 With this kind of security, the investor generally expects the market to move higher or at least to remain stable, so he doesn't lose his capital and makes benefits with high coupons. Moreover, a Reverse Convertible can be beneficial if the volatility is expected to decrease or to stay low in the future, as the investor is mainly shorting volatility.
@@ -182,7 +182,7 @@ With this kind of security, the investor generally expects the market to move hi
 \section{Definition of a Barrier Reverse Convertible}
 \label{sec:BRC-definition}
 
-The Barrier Reverse Convertible is slightly different because it contains a barrier on the level of the underlying : if the underlying doesn't reach the barrier during the lifetime of the asset, the nominal is given back at the end, but in the case it is, the put is activated and the final payoff is the one of a short put. Of course, coupons are paid according to the terms of the contract. The main difference with the Reverse Convertible is thus the path-dependency of the asset. \\
+The Barrier Reverse Convertible is slightly different because it has a barrier on the level of the underlying : if the underlying doesn't reach the barrier during the lifetime of the asset, the nominal is given back at the end, but in the case it is, the put is activated and the final payoff is the one of a short put. Of course, coupons are paid according to the terms of the contract. The main difference with the Reverse Convertible is thus the path-dependency of the asset. \\
 
 Figure \ref{fig:BRC-payoff} summarizes the payoff profile of a Barrier Reverse Convertible:
 
@@ -193,7 +193,7 @@ Figure \ref{fig:BRC-payoff} summarizes the payoff profile of a Barrier Reverse C
     \label{fig:BRC-payoff}
 \end{figure}
 
-The barrier is always a knock-in option\footnote{See Appendix \ref{appendix:down-in-put} for a reminder on barrier options}, but it can be either 'up' or 'down'. If the barrier is 'up', it means that it is reached if the level of the underlying is above it. If the barrier is down, it is reached if the level of the underlying is below it.
+The barrier is always an "in" option\footnote{See Appendix \ref{appendix:down-in-put} for a reminder on barrier options}, but it can be either 'up' or 'down'. If the barrier is 'up', it means that it is reached if the level of the underlying goes above it. If the barrier is down, it is reached if the level of the underlying goes below it.
 
 \section{Multi Barrier Reverse Convertibles}
 \label{sec:multi-BRC-definition}
@@ -208,7 +208,7 @@ Multi \textit{Barrier Reverse Convertibles} are a type of Barrier Reverse Conver
 The choice of the underlying to be compared with the barrier can be different from the one to be compared with the strike, which allows 9 different types of multi BRCs.
 
 \section{Adding the callability}
-To the regular (multi) BRCs can be added the callability by the issuer. This means that the issuer can buy the contract at several dates and at a certain amount specified in the contract. The amount of this redemption is generally the nominal plus the on-going coupon.
+To the regular (multi) BRCs can be added the callability by the issuer. This means that the issuer can buy back the contract at several dates and at a certain amount specified in the contract. The amount of this redemption is generally the nominal plus the on-going coupon.
 
 %--------------------------------------------------------------------------
 %	Chapter 2 
@@ -218,7 +218,7 @@ To the regular (multi) BRCs can be added the callability by the issuer. This mea
 
 \chapter{Pricing Methodology}
 \label{chap:pricing-methodology}
-Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with it is that the price between the beginning and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time step needed, but this would be computationally too long and too complex to be efficient.  
+Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with this method is that the price between the beginning and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time step needed, but this would be computationally too long and too complex to be efficient.  
 
 A better solution would be to proceed in a backward manner, beginning with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.
 
@@ -232,21 +232,21 @@ The whole methodology will be described in this chapter. First, we will present 
 As explained above, the objective is to compute the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
 $$S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}$$
 $$Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}$$
-$\textbf{S}=(S_{t})_{t\geq0}$ is the forward component of the system. It represents the underlyings and its dimension is $d$. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is uni-dimensional.\\
+$\textbf{S}=(S_{t})_{t\geq0}$ is a d-dimensional stochastic variable. It is the forward component of the system which represents the underlyings. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is uni-dimensional.\\
 The process $W$ is a d-dimensional brownian motion defined on a probability space $(\Omega,\mathcal{F},\mathbb{P})$ provided with its natural filtration $(\mathcal{F)}_{t}$ and generated by $W$. 
-$T$ is the maturity of our asset.\\
+$T$ is the maturity of our asset in year fraction.\\
 
-The function $f$ is called the driver function. It should be uniformly Lipschitz, \textit{ie} there exist a constant $C$ such that :
+The function $f$ is called the driver function. It must be uniformly Lipschitz, \textit{ie} there must exist a constant $C$ such that :
 $$\forall (y_{1},z_{1}),(y_{2},z_{2}), |f(t,y_{1},z_{1})-f(t,y_{2},z_{2})|\leq C(|y_{1}-y_{2}|+|z_{1}-z_{2}|)$$
 
 Antonelli \cite{antonelli1993backward} proved the existence of such a solution using a fixed point theorem when the function $b$ does not depend on $(Z_{t})_{t\geq0}$ (which is our case) and under the condition $CT<1$ with $C$ the Lipschitz constant of $f$. In our case, $C$ is the risk free rate (see \ref{subsec:choice-of-f}); it is small enough so that this condition is almost always verified.\\
 
-Resolving the backward equation thus consists in computing a pair of processes $(Y,Z)$. We will more especially focus on the process $(Y_{t})_{t\geq0}$ which gives the price of the option.
+Resolving the backward equation thus consists in computing a pair of processes $(Y,Z)$. We will pay particular attention on the process $(Y_{t})_{t\geq0}$ which gives the price of the option.
 
 \section{Resolution of the forward equation}
-\subsection{Model and scheme of discretization for the underlyings}
+\subsection{Model and discretization scheme for the underlyings}
 \label{subsec:underlying-discretization}
-The model used for the diffusion of the underlyings is the Black-Scholes model. As the pricing is done under risk-neutral probability, we have for each underlying $(S^{i}_{t})_{t\geq0}$:
+The model used for the diffusion of the underlyings is the Black-Scholes model. We suppose that all the underlyings have the same currency. As the pricing is done under risk-neutral probability, we have for each underlying $(S^{i}_{t})_{t\geq0}$:
 $$
 \begin{cases}
 dS_{t}^{i}=r\text{d}t+\sigma_{i}\text{d}W_{t}^{i} \\
@@ -263,10 +263,10 @@ $$
 with $W_{t_{k}}^{i} \sim \mathcal{N}(0,t_{k}-t_{k-1})$.\\
 
 \subsection{Taking into account the correlation}
-Moreover, the brownian motions are all correlated : $$\forall (i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\},~ \mathbb{E}(\text{d}W_{t}^{i}\text{d}W_{t}^{j})=\rho_{ij}\text{d}t$$
-In order to take into account these correlations, we should generate the brownian motions with a multivariate Gaussian distribution with correlation matrix $\Sigma=(\rho_{i,j})_{(i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\}}$.\\
+Moreover, the brownian motions are all correlated : $$\forall (i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\},~ \text{d}\langle W^{i},W^{j}\rangle_t=\rho_{ij}\text{d}t$$
+In order to take into account these correlations, we should generate the brownian motions with a multivariate Gaussian distribution with correlation matrix $\Sigma=(\rho_{ij})_{(i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\}}$.\\
 
-The first step is to generate $d$ independent realizations of a standard normal distribution in a matrix $M$. Then, we should calculate the matrix $C$ such that $CC^{T}=\Sigma$ thanks to a Cholesky decomposition. To do so, the matrix $\Sigma$ has to be definitive positive, which is not always the case. \\
+The first step is to generate $d$ independent realizations of a standard normal distribution in a matrix $M$. Then, we should decompose $M$ by Cholesky, \textit{ie} we should calculate the matrix $C$ such that $CC^{T}=\Sigma$. To do so, the matrix $\Sigma$ has to be definitive positive, which is not always the case. \\
 
 \begin{tcolorbox}[breakable,colback=cyan,opacityfill=0.05,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
 \begin{center}
@@ -277,28 +277,28 @@ The first step is to generate $d$ independent realizations of a standard normal 
     \item Diagonalize the matrix $\Sigma$, \textit{ie} find $P$ an invertible matrix and $D$ a diagonal matrix such that $\Sigma=PDP^{-1}$
     \item Let $(d_{ii})_{i \in \{1,\ldots,d\}}$ be the diagonal elements of the matrix $D$. We calculate : $$\forall i=1,\ldots,d, d_{ii}^{*}=\begin{cases}
         d_{ii}& \text{ if } d_{ii}>0 \\
-        10^{-12}& \text{ if } d_{ii}\leq0
+        \epsilon& \text{ if } d_{ii}\leq0
     \end{cases}$$
  \item Writing $D^{*}$ the diagonal matrix with $d_{ii}^{*}$ the diagonal elements, we can compute $$\Sigma^{*}=PD^{*}P^{-1}$$ where $\Sigma^{*}$ is the corrected definite positive matrix.
 \end{enumerate}
 \end{tcolorbox}
-Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives a realization of a multivariate Gaussian distribution whose correlation matrix is $\Sigma$.
-\subsection{Brownian bridge and final payoff computation}
+Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives a realization of a multivariate Gaussian distribution whose correlation matrix is $\Sigma^*$.
+\subsection{Brownian bridge and pricing}
 \label{subsec:brownian-bridge}
-The problem of the discretization of the forward equation is that we lose the continuous monitoring of the BRC's barrier. In order to catch the continuity of the barrier without using a very high number of steps in the time grid, we decided to use brownian bridges.\\
+The problem of the discretization of the forward equation is that we lose the continuous monitoring of the BRC's barrier. In order to capture the continuity of the barrier without using a very high number of steps in the time grid, we decided to use brownian bridges.\\
 
-Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by \footnote{See Appendix \ref{appendix:brownian-bridge} for the demonstration of this formula}:
-$$p(x,y,t_{k+1}-t_k,B,\sigma) = 
+Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by \footnote{See Appendix \ref{appendix:brownian-bridge} for the proof of this formula}:
+$$\phi(x,y,t_{k+1}-t_k,B,\sigma) = 
 \begin{cases}
 1 &\text{ if } x\leq B \text{ or } y\leq B \\
 \exp(-2\frac{\log(\frac{x}{B})\log(\frac{y}{B})}{\sigma^{2}(t_{k+1}-t_k)}) &\text{ otherwise }
 \end{cases}$$
-The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=p(S_{t_{i}},S_{t_{i+1}},(t_{i+1}-t_i),B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows :
+The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=\phi(S_{t_{i}},S_{t_{i+1}},(t_{i+1}-t_i),B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows :
 $$\Phi(S) = \text{cap} -(K-S_{T})_{+}(1-p)$$
 
 When it comes to several underlyings, the computation of $p$ becomes harder. As explained in \ref{sec:multi-BRC-definition}, the barrier can be a \textit{WorstOf} or a \textit{BestOf}. This means that there exists 4 cases :
 \begin{enumerate}
-    \item \textbf{The barrier is a \textit{WorstOf} and is down} : the barrier is touched if at least one of the underlying has touched the barrier, which is the complementary of the event "Not any underlying has touched the barrier". We then have $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$, where $p_{i}^{j}$ is the probability that the $j^{th}$ underlying has reached the barrier between $t_{i}$ and $t_{i+1}$.
+    \item \textbf{The barrier is a \textit{WorstOf} and is down} : the barrier is touched if at least one of the underlying has touched the barrier, which is the complementary of the event "No underlying has touched the barrier". We then have $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$, where $p_{i}^{j}$ is the probability that the $j^{th}$ underlying has reached the barrier between $t_{i}$ and $t_{i+1}$.
     
     \item \textbf{The barrier is a \textit{WorstOf} and is up} : the barrier is touched if all the underlyings have, thus $p_{i}=\prod_{j=1}^{d}p_{i}^{j}$
     
@@ -306,18 +306,18 @@ When it comes to several underlyings, the computation of $p$ becomes harder. As 
     
     \item \textbf{The barrier is a \textit{BestOf} and is up} : this situation is the same as the first one so  $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$
 \end{enumerate}
-Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not really the case. Nevertheless, this approximation is necessary to have simple formulas and to take them into account in the payoff computation.
+Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not generally the case. Nevertheless, this approximation is necessary to have simple formulas and to take them into account in the payoff computation.
 \section{Resolution of the backward equation}
-\subsection{Choice of the function f}
+\subsection{Choice of the driver function}
 \label{subsec:choice-of-f}
-In order to find the expression of $f$ and to give more intuition about what the process $(Z_{t})_{t\geq0}$ represents, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose risk-free rate is $r$. The value of the portfolio should then evolve like this :
+In order to find the expression of $f$ and to give more intuition about what the process $(Z_{t})_{t\geq0}$ represents, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose fixed rate is the risk-free rate $r$. The value of the portfolio then evolves like:
 $$dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}dS_{t}$$
 $$dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}(rS_{t}\text{d}t+\sigma S_{t}\text{d}W_{t})$$
-We can rewrite this :
+which gives:
 $$dY_{t} = rY_{t}\text{d}t + \sigma a_{t}S_{t}\text{d}W_{t}$$
 The process $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
-The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the $\Delta$ of the option. 
-\subsection{Resolution formula}
+The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
+\subsection{Resolution}
 Let us rewrite the backward equation at $t_{k}$ and $t_{k+1}$, two consecutive times in the time grid :
 $$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} dW_{s}$$
 $$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} dW_{s}$$
@@ -335,7 +335,7 @@ We thus have :
 \begin{equation}
     Y_t = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds
 \end{equation}
-Let us denote $\Delta_{k}=t_{k+1}-t_{k}$. We will consider the following approximation for the integral :
+Let us denote $\Delta_{t_k}=t_{k+1}-t_{k}$. We will consider the following approximation for the integral :
 $$\int_{t_{k}}^{t_{k+1}}f(s,Y_{s})ds \simeq \Delta_{t_{k}}\theta f(t_{k},Y_{t_{k}}) + \Delta_{t_{k}}(1-\theta) f(t_{k+1},Y_{t_{k+1}})$$
 and choose $\theta=1$. The resolution formula becomes :
 \begin{equation}
@@ -345,12 +345,12 @@ Y_{t_{k}} = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_{k}}f(t_{k},
 This has to be calculated for every step in the time grid and for every simulation of the Monte Carlo method.
 \subsection{Computation of the conditional expectation}
 \label{subsec:conditional-expectation}
-The above formula shows that we have to estimate at each step the conditional expectation $\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_k})$. Longstaff and Schwartz \cite{schwartz2001valuing} used for American option pricing the Least Square Monte Carlo (LSM) method, which consists in estimating the conditional expectation by regressing the payoffs on functions of the state variables. The whole difficulty resides in the choice of the basis functions used for the regression. If Longstaff and Schwartz used polynomial functions for the pricing of an American put option, it has been shown that the choice of the basis functions is not clear and can really affect the option prices when it comes to more complex derivatives because it becomes hard to represent correctly the information available at each date \cite{moreno2003robustness}.
+The above formula shows that we have to estimate at each step the conditional expectation $\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_k})$. Longstaff and Schwartz \cite{schwartz2001valuing} used for American option pricing the Least Square Monte Carlo (LSM) method, which consists in estimating the conditional expectation by regressing the payoffs on functions of the state variables. The whole difficulty lies in the choice of the basis functions used for the regression. If Longstaff and Schwartz used polynomial functions for the pricing of an American put option, it has been shown that the choice of the basis functions is not clear and can deeply affect the option prices when it comes to more complex derivatives because it becomes hard to represent correctly the information available at each date \cite{moreno2003robustness}.
 
 In order to avoid those problems, a kernel regression method has been chosen to estimate the conditional expectation in our case.\\
 
 This method consists in the estimation of $\mathbb{E}(Y|X=x)$ for a given $x$. The estimator proposed by both Nadaraya \cite{nadaraya1964estimating} and Watson \cite{watson1964smooth} in 1964 is the following : $$\hat{m}_{h}(x)=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})y_{i}}{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
-with $N$ being the number of observations drawn independently.\\
+with $N$ being the number of observations drawn independently and $K_h$ the kernel.\\
 
 \begin{proof}
 The conditional expectation can be written $$\mathbb{E}(Y|X=x)=\int yf(y|x)dy = \int y\frac{f(x,y)}{f(x)}dy$$
@@ -372,16 +372,16 @@ The choice of the matrix $H$ appears to be crucial as it controls the smoothing 
 with $\sigma_{i}^{2}$ the variance of the $d^{th}$ variable.\\
 
 The estimator then finally becomes :
-$$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{i})^{2}}{\sigma_{j}^{2}}}}{\sum_{i=1}^{N}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{i})^{2}}{\sigma_{j}^{2}}}}$$
+$$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}{\sum_{i=1}^{N}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}$$
 \subsection{Picard's method}
 We can see from the resolution formula \eqref{resolutionFormula} that the value of $Y_{t_{k}}$ we want to compute appears on the left and on the right side of the equation. We will thus use a fixed-point argument to compute $Y_{t_{k}}$.
 
 \begin{prop}
-The application $\Psi : Y \rightarrow \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t}f(t_{k},Y_{t_{k}})$ is a contraction of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$ for a small $\Delta_{t_{k}}$.
+The application $\Psi : Y \rightarrow \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_k}f(t_{k},Y_{t_{k}})$ is a contraction of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$ for a small $\Delta_{t_{k}}$.
 \end{prop}
 
 \begin{proof}
-Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
+Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. Let us remind that $f(t,Y_t)=-rY_t$. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
 $$=\Delta_{t_{k}}r |Y_{2}-Y_{1}|\leq \Delta_{t_{k}} C_{r}|Y_{2}-Y_{1}|$$
 where $C_{r}$ is a constant depending on $r$.
 \end{proof}
@@ -390,13 +390,13 @@ Thanks to this, we can apply Picard iterations to find $Y_{t_{k}}$. The methodol
     \item $i=0$ (first iteration) : $Y_{t_{k}}=0$
     \item $i>0$ (next iterations) : $Y_{t_{k}}^{i}=\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t}) + \Delta_{t}f(t_{k},Y_{t_{k}}^{i-1})$
 \end{itemize}
-We stop the iterations when the value seems to have converged, \textit{ie} when the difference between two iterations is less than $10^{-8}$.
+We stop the iterations when the value seems to have converged, \textit{ie} when the difference between two iterations is less than $\epsilon$.
 \subsection{Computation at time $t=0$}
 \label{subsec:computation-0}
 At time $t=0$, the resolution formula \eqref{resolutionFormula} becomes $$Y_{t_{0}} = \mathbb{E}(Y_{t_{1}}|\mathcal{F}_{t_{0}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})=\mathbb{E}(Y_{t_{1}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})$$
-No more kernel estimation is then needed, the computation of $Y_{t_{0}}$ only requires the computation of an expectation (which is approximated by the mean of the vector $(Y_{1,i})_{i=1,\ldots,N}$) and Picard iterations. We use the Monte Carlo estimator :
+No more kernel estimation is then needed, the computation of $Y_{t_{0}}$ only requires the computation of an expectation (which is approximated by the mean of the vector $(Y_{t_1,i})_{i=1,\ldots,N}$) and Picard iterations. We use the Monte Carlo estimator :
 $$Y_{t_{0}} = \frac{1}{N}\sum_{i=1}^{N}Y_{1,i}-r\Delta_{t_{0}}Y_{t_{0}}$$
-\subsection{Computation of the $\Delta$ of the option}
+\subsection{Computation of the delta of the option}
 As explained in \ref{subsec:choice-of-f}, the process $(\Delta_t)_{0 \leq t \leq T}$ is given by $\Delta_t=\frac{Z_t}{\sigma S_t}$. In order to compute $\Delta_{t_0}$, we then have to compute $Z_{t_0}$.
 Let us rewrite equation \ref{eq:Y_t} multiplied by $\Delta W_{t_k} = W_{t_k+1}-W_{t_k}$ and taken with the conditional expectation $\mathbb{E}(.|F_{t_k})$:
 $$\begin{aligned}
@@ -425,7 +425,7 @@ We can then compute $Z_{t_k}$ for each $t_{k}$ with the following formula :
 And $\Delta_{t_0}$ is given by :
 $$\Delta_{t_0} \simeq \frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}}|F_{t_0})=\frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}})$$
 
-\section{Resolution of a double reflected backward SDE}
+\section{Resolution of a double reflected BSDE}
 \subsection{Motivations}
 There are two aspects of the callable Barrier Reverse Convertible that can not be included in the final payoff. These are the coupons that can be paid throughout the whole life of the asset, and the callability of the BRC that can be activated at determined times before maturity. This can introduce some discontinuity in the price of the asset, which we tried to integrate in our modeling with reflected forward-backward stochastic differential equations.
 \subsection{Description of the new problem and resolution}
@@ -440,7 +440,7 @@ The processes $(L_{t})_{0\leq t \leq T}$ and $(U_{t})_{0\leq t \leq T}$ are call
 The first step to resolve this new problem is to resolve the unreflected BSDE on the time interval $[t_{k-1},t_{k}]$, just as we described in the previous section. We then compute : $$\widetilde{\widetilde{Y}}_{t_{k-1}}=Y_{t_{k}}+\int_{t_{k-1}}^{t_{k}}f(s,Y_{s},Z_{s})ds-\int_{t_{k-1}}^{t_{k}}Z_{s}dW_{s}$$
 
 Then, if the date $t_{k-1}$ is a coupon payment date, we adjust the price and $\widetilde{Y}_{t_{k-1}}= \widetilde{\widetilde{Y}}_{t_{k-1}} + K_{t_{k-1}}^{+}$ with $K_{t_{k-1}}^{+}$ the value of the coupon rate multiplied by the value of the nominal. If $t_{k-1}$ is not a coupon payment date, then $K_{t_{k-1}}^{+}=0$. \\
-Finally, if the date $t_{k-1}$ is a call date, we have to make sure that the price of the asset doesn't go up the value at which it can be bought by the issuer. Again, we have to adjust the price. We define :
+Finally, if the date $t_{k-1}$ is a call date, we have to make sure that the price of the asset doesn't push up the value at which it can be bought by the issuer. Again, we have to adjust the price. We define :
 $$U_{t_{k-1}}=
 \begin{cases}
 \text{Value of the call} & \text{if } \widetilde{Y}_{t_{k-1}}\geq \text{Value of the call }\\
@@ -450,12 +450,12 @@ $$U_{t_{k-1}}=
 And $Y_{t_{k-1}}=\min(\widetilde{Y}_{t_{k-1}},U_{t_{k-1}})$. We can define $K_{t_{k-1}}=Y_{t_{k-1}}-\widetilde{Y}_{t_{k-1}}$ so that $(K_{t})_{0\leq t\leq T}$ sticks with its definition.
 
 \newpage
-\section{Taking into account the default risk}
+\section{Taking into account the risk of default}
 The price of the asset still doesn't include the probability of default of the issuer. In order to do that we have to multiply the price by the survival probability of the issuer.\\
 
 We thus use a reduced-form model, which consists in modeling the conditional law of the random time of default $\tau$. In this model, the conditional default probability is given by :
 \begin{equation}
-    \mathbb{Q}(\tau<t+\text{d}t|\tau\geq t)=\lambda \text{d}t
+    \mathbb{Q}(\tau<t+\text{d}t|t\geq \tau)=\lambda \text{d}t
     \label{eq:reduced-form}
 \end{equation}
 
@@ -480,7 +480,7 @@ We can summarize the pricing methodology we use for callable barrier reverse con
         \item Generate a sample of a multivariate normal distribution of dimension $N\times d$ ($N$ is the number of simulations and $d$ the number of underlyings) and covariance matrix  $\Sigma$ 
         \item Diffuse the underlyings with the scheme described in \ref{subsec:underlying-discretization}
     \end{enumerate}
-    \item \textbf{Compute the payoff of the BRC} taking into account the brownian bridges
+    \item \textbf{Compute the payoff of the BRC} using the brownian bridges
     \item \textbf{Resolution of the backward stochastic differential equation} for each step $t_{k}$ of the time grid :
     \begin{enumerate}
         \item Compute the conditional expection $\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t})$ for each simulation as described in \ref{subsec:conditional-expectation}
@@ -496,9 +496,9 @@ We can summarize the pricing methodology we use for callable barrier reverse con
 %	Chapter 3
 %--------------------------------------------------------------------------
 
-\chapter{Results : from a barrier option to a callable BRC}
+\chapter{Results: from a barrier option to a callable BRC}
 
-\section{Results on a simple down-in barrier}
+\section{Simple down-in barrier}
 As explained in \ref{sec:BRC-definition}, one of the principal components of a Barrier Reverse Convertible is a down and in barrier option on a put. The first step of our approach is thus to price this component with a backward stochastic differential equation resolution. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
 
 We chose here to work with only one underlying, so we have an analytical formula that gives the theoretical price of the option. Let us take the same notations as in \ref{subsec:brownian-bridge}. For a barrier level $B$ that is less than or equal to the strike $K$, the price $P$ of a down-in put is then given by \cite{hull2016options}: 
@@ -586,7 +586,7 @@ Figure \ref{fig:down-in-barrier-pricing} and Table \ref{tab:barrier-option-prici
 \legend{Case 1, Case 2, Case 3, Case 4}
 \end{axis}
 \end{tikzpicture}
-    \caption{Results of the down-in barrier pricing}
+    \caption{Results on the down-in barrier pricing}
     \label{fig:down-in-barrier-pricing}
 \end{center}
 \end{figure}
@@ -605,13 +605,13 @@ Nb of simulations & 1 & 2 & 3 & 4\\ % Column names row
 10000 & -2.59\% & -0.54\% & -0.31\% & -0.47\%\\ % Content row 5
 \bottomrule % Bottom horizontal line
 \end{tabular}
-\caption{Relative errors (\%) on the down-in barrier pricing (mean on 100 pricings)}
+\caption{Relative errors (\%) on the down-in barrier pricing}
 \label{tab:barrier-option-pricing}
 \end{table}
 
 We can see that the convergence is obtained in each case, with a relative error inferior to 3\% in Case 1 and inferior to 1\% for the other cases. Results for the Case 1 seem to be less precise than the others ; this could be explained by the fact that in this case, the barrier is rarely touched and there is only a few simulations which end to a non-worthless payoff. The estimation of the conditional expectation can thus become more difficult and imprecise.
 
-\section{Results on callable BRCs}
+\section{Callable BRCs}
 \label{sec:callable-BRC}
 After having priced the down-in barrier successfully, we can now price a more complex instrument such as the Barrier Reverse Convertible. In order to do that, the whole methodology described in \ref{chap:pricing-methodology} is now applied, that is to say that the coupons and the callability, as well as the credit risk, are now taken into account. The volatility chosen for the pricing is the historical volatility over the past 90 days.
 
@@ -758,16 +758,16 @@ We compare our result with the real market prices extracted from the UBS platfor
             \end{tikzpicture}
   \label{fig:sub2}
 \end{minipage}
-\caption{Results of the pricing on callable BRCs}
+\caption{Results on the pricing on callable BRCs}
 \label{fig:results-BRC-pricing}
 \end{figure}
 \newpage
 For the two first \textit{Barrier Reverse Convertibles}, the price seems to be slightly overestimated. This could be due to the fact that the maturity is longer than for the last one, thus accumulating more errors in the backward resolution. It is also worth noting that in the second case, the price converges very early ; this could be due to the fact that the product is always called because of a high coupon rate and early callable dates. Indeed, if there is a lot of coupons with a high rate expected after the last callable date, this will increase the expected future value of the product and encourage the issuer to call it.
 
 
-\section{Results on multi callable BRCs}
+\section{Multi-dimensional callable BRCs}
 \label{sec:multi-BRC-description}
-We now apply the pricing methodology on multi-callable Barrier Reverse Convertibles. We chose only "WorstOf" assets because they represent a greater part of the BRC market and it is thus easier to find reliable datas to compare with. Their descriptions are gathered in Table \ref{tab:multi-BRC-charachteristics} :
+We now apply the pricing methodology on multi-callable Barrier Reverse Convertibles. We chose only "WorstOf" assets because they represent a greater part of the BRC market and it is thus easier to find reliable data to compare with. Their descriptions are gathered in Table \ref{tab:multi-BRC-charachteristics} :
 
 \begin{table}[H]
 \centering
@@ -814,7 +814,7 @@ Nikkei225 & & & & 1.0 \\ % Content row 1
 \label{tab:corr}
 \end{table}
 
-Again, we compare our results with the real price extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the average absolute error obtained on 20 simulations :
+Again, we compare our results with the actual price extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the average absolute error obtained on 20 simulations :
 
 \begin{figure}[H]
 \centering
@@ -891,26 +891,25 @@ Again, we compare our results with the real price extracted from the UBS platfor
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Results of the pricing on callable BRCs}
+\caption{Results on the pricing on callable BRCs}
 \label{fig:results-multi-BRC-pricing}
 \end{figure}
 
-The errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain coherent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
+The errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain consistent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
 
 \section{Conclusion on the results}
 The overall results of the pricing methodology are quite satisfying and tend to reproduce the market price with low errors. Nevertheless, they are always overestimated when it comes to more complex assets (longer maturity, several underlyings etc). This shows that our methodology presents some flaws and could be improved in many ways, considering more realistic hypothesis and taking into account some other important aspects of the market :
 \begin{itemize}
-    \item In the Black-Scholes model, the volatility is constant over the whole period of the pricing, which does not reflect the reality of the market. An other model for the underlyings could be used, such as a local volatility model or a stochastic volatility model. A term structure could also be considered.
+    \item In the Black-Scholes model, the volatility is constant over the whole period of the pricing, which does not reflect the reality of the market. An other model for the underlyings could be used, such as a local volatility model or a local stochastic volatility model. A term structure could also be considered.
     \item The Black-Scholes model also assumes the log-normality of the returns, which underestimates the possible extreme events.
-    \item Taking liquidity risk into account could have a real impact and help to adjust the price downwards as the market of BRCs is a very specific market, mainly concentrated in Switzerland.
-    \item Transaction costs are also to be considered for a more accurate pricing.
+    \item Taking liquidity risk into account could have a consequent impact.
 \end{itemize}
 
 Moreover, our results show that the pricing methodology lacks accuracy for corner cases and could be improved in this way considering for example a better way to compute the conditional expectation in the backward resolution formula (we could consider a more sophisticated way to deal with the bandwidth parameter $h$, which has a great influence on the kernel estimation).
 
 \section{Improvement of the methodology with a volatility term structure}
 \subsection{The need of a volatility term structure}
-In order to improve our methodology and obtain better results, we chose to model the volatility with a term structure and interpolate it when required. This presents the advantage not to completely upset our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
+In order to improve our methodology and obtain better results, we chose to model the volatility with a term structure and interpolate it when required. This gives the advantage of not completely upsetting our methodology and implementation but still consider a non-constant volatility. It is also convenient since it doesn't need any calibration and since the data of the volatility term structure can be easily found.
 
 \subsection{Gregory-Delbourgo interpolation}
 This rational quadratic spline interpolation has been presented by Gregory \& Delbourgo in \cite{gregory1982piecewise}. The main advantage of such an interpolation is that it provides an interpolant of continuity class $C^1$ and that it preserves the shape of the initial data set. Note that this interpolation only works for a strictly monotonic set of points $(x_i,f_i)$, for $i=1,\ldots,n$. \\
@@ -949,7 +948,7 @@ $$s^{(1)}(x) = \frac{d_{i+1}\theta^2+2\Delta_i\theta(1-\theta+d_i(1-\theta)^2)}{
 
 We can then conclude that $\forall x\in[x_i;x_{i+1}]$, $s^{(1)}(x)$ exists and $s^{(1)}(x)>0$, which was expected.
 
-This interpolation working only for a strictly monotonic set of points, we apply it on the term structure $t \mapsto \sigma^2 t$ (which generally satisfies this hypothesis). The advantage of such an interpolation compared with a polynomial interpolation is that it avoids oscillating phenomenons\footnote{One can think of the Runge example presented in \cite{quarteroni2000methodes} which shows the divergence of the Lagrange interpolation at the extremity of the interval considered with polynomial functions of high degree for certain functions such as $x \mapsto \frac{1}{1+x^2}$.} due to equidistant nodes. Nevertheless, interpolation splines can sometimes present oscillations because of too high derivatives \cite{quarteroni2000methodes}, which does not seem to be the case in our volatility term structure. 
+This interpolation working only for a strictly monotonic set of points, we apply it on the term structure $t \mapsto \sigma^2 t$. The advantage of such an interpolation compared with a polynomial interpolation is that it avoids oscillating phenomena\footnote{One can think of the Runge example presented in \cite{quarteroni2000methodes} which shows the divergence of the Lagrange interpolation at the extremity of the interval considered with polynomial functions of high degree for certain functions such as $x \mapsto \frac{1}{1+x^2}$.} due to equidistant nodes \cite{quarteroni2000methodes}.
 
 \subsection{Results}
 In order to have comparable results, we decided to price again the 6 BRCs presented in the previous sections. The only change is that we used a volatility term structure based on historical volatilities (provided by the Bloomberg platform) and interpolated the values needed for the diffusion of the underlyings and for the estimation of the conditional expectations with the Gregory-Delbourgo interpolation.\\
@@ -1076,15 +1075,15 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Results of the pricing on callable BRCs with the Gregory-Delbourgo interpolation}
+\caption{Results on the pricing on callable BRCs with the Gregory-Delbourgo interpolation}
 \label{fig:results-BRC-pricing-Delbourgo}
 \end{figure}
 
 As before, the pricing methodology seems to converge but now the results are slightly different. Indeed, for the first BRC, the convergence price has decreased and is now more relevant compared to the bid and the ask prices. Nevertheless, for the second BRC, the price has increased and moved away from the bid-ask.
 
-This shows that the way we represent the volatility in our model is quite important as it comes to long maturity assets and that the hypothesis of a constant volatility is not relevant in those cases. The differences of behavior between both BRCs could be due to the fact that using a term-structure does not influence the volatility the same way ; in the first case, the volatility is revised upwards, which makes the barrier hit more often and thus the price smaller, whereas in the second case, it is corrected downwards which makes the price of the underlying more stable and the asset price higher. \\
+This shows that the way we represent the volatility in our model is quite important when it comes to long maturity assets and that the hypothesis of a constant volatility is not relevant in those cases. The differences of behavior between both BRCs is certainly due to the fact that using a term-structure does not influence the volatility the same way ; in the first case, the volatility is revised upwards, which makes the barrier hit more often and thus the price smaller, whereas in the second case, it is corrected downwards which makes the price of the underlying more stable and the asset price higher. \\
 
-On the contrary, let us notice that for the assets with shorter maturity (like the last one), the term-structure of the volatility does not imply much changes in the price. This seems coherent in the sense that volatility moves over the time have less influence in a short-term horizon.\\
+On the contrary, let us notice that for the assets with shorter maturity (like the last one), the term-structure of the volatility does not imply much changes in the price. This seems consistent in the sense that volatility moves over the time have less influence in a short-term horizon.\\
 
 Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean on 20 simulations) of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
 
@@ -1163,15 +1162,14 @@ Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean o
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
-\caption{Results of the pricing on callable BRCs}
+\caption{Results on the pricing on callable BRCs}
 \label{fig:results-multi-BRC-pricing-delourgo}
 \end{figure}
 
 \newpage
-Again, the results are slightly different from the ones without the volatility term structure. Indeed, for the first BRC, the absolute error has softly increased whereas it has diminished by half for the third BRC. However, the problem of the second BRC whose barrier was never touched has not been resolved since the price is still constant and reflects the bond price.
+Again, the results are slightly different from the ones without the volatility term structure. Indeed, for the first BRC, the absolute error has softly increased whereas it has diminished by half for the third BRC. However, the problem of the second BRC whose barrier was never touched has not been resolved since the price is still constant and reflects the bond price.\\
 
-\subsection{Conclusion}
-Adding a term structure to the volatility has mitigated results. For some cases, it makes the pricing more accurate but it does not solve the default of precision present in corner cases (when the barrier is barely touched). However, considering the results on uni-dimensional BRCs, it seems obvious that a constant volatility is not enough to reproduce the real behavior of the volatility and that a more complex model is necessary for an accurate pricing. 
+Adding a term structure to the volatility has thus mitigated results. For some cases, it makes the pricing more accurate but it does not solve the default of precision present in corner cases (when the barrier is barely touched). However, considering the results on uni-dimensional BRCs, it seems obvious that a constant volatility is not enough to reproduce the real behavior of the volatility and that a more complex model is necessary for an accurate pricing. 
 
 %--------------------------------------------------------------------------
 %	Conclusion
@@ -1179,7 +1177,7 @@ Adding a term structure to the volatility has mitigated results. For some cases,
 \backmatter
 \chapter*{Conclusion}
 \addcontentsline{toc}{chapter}{Conclusion}
-The main objective of this report was the pricing of a structured product called Callable Barrier Reverse Convertible. This kind of asset presents too much complexity (continuous barrier component on potentially several underlyings, coupons, presence of dates of possible call by the issuer), to prevent us to use a basic pricing methodology such as a Monte Carlo method. The modeling chosen was a reflected forward-backward stochastic differential equation system under the Black-Scholes model. The resolution of such a SDE system leads to the price of the asset in a backward manner, which allows us to take into account all the particularities of the callable BRC. If this methodology is close to the Longstaff-Schwartz algorithm used for the pricing of American options, different choices had to be made due to the complexity of the asset, such as the use of a kernel regression instead of the LSM method in the estimation of the conditional expectations.
+The main objective of this report was the pricing of a structured product called Callable Barrier Reverse Convertible. This kind of asset presents too much complexity (continuous barrier component on potentially several underlyings, coupons, presence of dates of possible call by the issuer), that prevent us to use a basic pricing methodology such as a Monte Carlo method. The modeling chosen was a reflected forward-backward stochastic differential equation system under the Black-Scholes model. The resolution of such a SDE system leads to the price of the asset in a backward manner, which allows us to take into account all the particularities of the callable BRC. If this methodology is close to the Longstaff-Schwartz algorithm used for the pricing of American options, different choices had to be made due to the complexity of the asset, such as the use of a kernel regression instead of the LSM method in the estimation of the conditional expectations.
 
 The quality of the results depends on several factors. For example, the longer the maturity of the asset, the less precise the price. The number of underlyings also plays a role in the accuracy of the results. Globally, the price we obtain is slightly overestimated compared with the bid and ask prices. This could be due to the flaws of our methodology and the unrealistic assumptions we made, but also to the kernel regression (which raises the question of a better bandwidth choice) that can affect the precision in corner cases.
 
@@ -1260,7 +1258,7 @@ with some boundary conditions :
 Under the Black-Scholes model (\textit{ie} with a constant interest rate $r$ and a constant volatility $\sigma$), the PDE (\ref{eq:BS-PDE}) can be analytically solved for barrier options. Analytical formulas can be found in \cite{hull2016options} and \cite{wilmott2007paul} ; for example, if the strike $K$ is above the barrier $B$, the price of a down-and-out call option is :
 $$V(S,t)=C(S,t)-C(B^2,t)(\frac{S}{B})^{1-\frac{2r}{\sigma}}$$
 
-\section{Demonstration of the brownian bridge formula}
+\section{Proof of the brownian bridge formula}
 \label{appendix:brownian-bridge}
 Let $(S_t)_{0 \leq t \leq T}$ be a normal process, $B$, $t_i$ and $t_{i+1}$ real numbers such that $t_{i+1}-t_i>0$. We have : 
 \begin{equation}
