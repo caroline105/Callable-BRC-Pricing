@@ -139,11 +139,11 @@ Structured products represent an attractive alternative to classical securities 
 
 In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity or an index. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractiveness of the product.
 
-Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{We use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
+Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{The Swiss Market Index (SMI) is Switzerland's stock market index made of 20 of the largest and most liquid stocks. Here, we use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
 
 \begin{figure}[H] 
     \centering
-    \includegraphics[scale=0.4]{images/BRC_median_return.png} 
+    \includegraphics[scale=0.45]{images/BRC_median_return.png} 
     \caption{BRC median returns in \% in Switzerland compared with the SMI index evolution}
     \label{fig:median-returns-BRC}
 \end{figure}
@@ -218,7 +218,7 @@ To the regular (multi) BRCs can be added the callability by the issuer. This mea
 
 \chapter{Pricing Methodology}
 \label{chap:pricing-methodology}
-Since the financial instrument we want to price is a multi-dimensional asset, the best choice of pricing methodology seems to be a Monte Carlo method. The only problem with this method is that the price between the beginning and the maturity of the contract is unknown, and more particularly at the times of possible redemption by the issuer (called times of callability). But the price of the asset at those particular times has to be known (and compared with the amount of redemption precised in the contract) in order to determine whether the callability is activated or not by the issuer. A first and naive idea would be to use a new Monte Carlo at each time step needed, but this would be computationally too long and too complex to be efficient.  
+The price of the asset has to be known at all the times of possible redemption by the issuer to determine whether the asset will be called or not at those dates (we suppose that the issuer activates the callability if the call level is higher than the expected discounted cash flows at that date). Because of the multi-dimensionality of the asset, a first and naive approach would be to use a Monte Carlo method, but this would imply to compute a new Monte Carlo at each call dates to ascertain the behavior of the issuer, which would be computationally too long and too complex to be efficient. 
 
 A better solution would be to proceed in a backward manner, beginning with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.
 
@@ -230,8 +230,11 @@ The whole methodology will be described in this chapter. First, we will present 
 \section{Presentation of the SDE system}
 \label{sec:SDE-presentation}
 As explained above, the objective is to compute the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
-$$S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}$$
-$$Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}$$
+$$\begin{cases}
+S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}\\
+ \\
+Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}
+\end{cases}$$
 $\textbf{S}=(S_{t})_{t\geq0}$ is a d-dimensional stochastic variable. It is the forward component of the system which represents the underlyings. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is uni-dimensional.\\
 The process $W$ is a d-dimensional brownian motion defined on a probability space $(\Omega,\mathcal{F},\mathbb{P})$ provided with its natural filtration $(\mathcal{F)}_{t}$ and generated by $W$. 
 $T$ is the maturity of our asset in year fraction.\\
@@ -249,7 +252,7 @@ Resolving the backward equation thus consists in computing a pair of processes $
 The model used for the diffusion of the underlyings is the Black-Scholes model. We suppose that all the underlyings have the same currency. As the pricing is done under risk-neutral probability, we have for each underlying $(S^{i}_{t})_{t\geq0}$:
 $$
 \begin{cases}
-dS_{t}^{i}=r\text{d}t+\sigma_{i}\text{d}W_{t}^{i} \\
+dS_{t}^{i}=r S_{t}^{i} \text{d}t+\sigma_{i} S_{t}^{i} \text{d}W_{t}^{i} \\
 S_{0}^{i}=s_{0}^{i} 
 \end{cases}
 $$
@@ -271,7 +274,7 @@ The first step is to generate $d$ independent realizations of a standard normal 
 \begin{tcolorbox}[breakable,colback=cyan,opacityfill=0.05,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
 \begin{center}
 \vspace{0.2cm}
-\textbf{How to make a matrix $\Sigma$ definite positive ?}
+\textbf{How to make a matrix $\Sigma$ definite positive ?\footnote{This method is a first approach that could be improved with more complex algorithms. A good methodology for making a matrix definite positive is the one presented in \cite{jung2015scaling} based on the scaling of eigenvalues and the rotation of eigenvectors.}}
 \end{center}
 \begin{enumerate}
     \item Diagonalize the matrix $\Sigma$, \textit{ie} find $P$ an invertible matrix and $D$ a diagonal matrix such that $\Sigma=PDP^{-1}$
@@ -306,18 +309,9 @@ When it comes to several underlyings, the computation of $p$ becomes harder. As 
     
     \item \textbf{The barrier is a \textit{BestOf} and is up} : this situation is the same as the first one so  $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$
 \end{enumerate}
-Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not generally the case. Nevertheless, this approximation is necessary to have simple formulas and to take them into account in the payoff computation.
+Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not generally the case\footnote{This is a first approximation that could be improved for example with the Large Deviation Theory that relies on the asymptotic behaviors of probability distributions. For more information on that subject, see \cite{baldi1995exact}, \cite{baldi1999pricing} and \cite{huh2008computation}}.
 \section{Resolution of the backward equation}
-\subsection{Choice of the driver function}
-\label{subsec:choice-of-f}
-In order to find the expression of $f$ and to give more intuition about what the process $(Z_{t})_{t\geq0}$ represents, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose fixed rate is the risk-free rate $r$. The value of the portfolio then evolves like:
-$$dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}dS_{t}$$
-$$dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}(rS_{t}\text{d}t+\sigma S_{t}\text{d}W_{t})$$
-which gives:
-$$dY_{t} = rY_{t}\text{d}t + \sigma a_{t}S_{t}\text{d}W_{t}$$
-The process $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
-The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
-\subsection{Resolution}
+\subsection{Resolution formula}
 Let us rewrite the backward equation at $t_{k}$ and $t_{k+1}$, two consecutive times in the time grid :
 $$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} dW_{s}$$
 $$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} dW_{s}$$
@@ -368,22 +362,24 @@ where $x=(x_{1},\ldots,x_{d})^{T}$, $x_{i}=(x_{1i},\ldots,x_{di})^{T}$, $d$ is t
 Furthermore, we chose to use the standard multivariate gaussian kernel which can be expressed as follows :
 $K_{H}(x)=\frac{1}{(2\pi)^{\frac{d}{2}}}|H|^{-\frac{1}{2}}e^{-\frac{1}{2}x^{T}H^{-1}x}$
 
-The choice of the matrix $H$ appears to be crucial as it controls the smoothing of the estimation. A good choice would be the \textit{rule of thumb} proposed by Silverman \cite{silverman1986density} which consists in a diagonal matrix whose terms are : $$\forall i=1,\ldots,d, H_{ii} = (\frac{4}{d+2})^{\frac{2}{d+4}}N^{\frac{-2}{d+4}}\sigma_{i}^{2}$$
+The choice of the matrix $H$ appears to be crucial as it controls the smoothing of the estimation. We chose the \textit{rule of thumb} proposed by Silverman \cite{silverman1986density} which consists in a diagonal matrix whose terms are : $$\forall i=1,\ldots,d, H_{ii} = (\frac{4}{d+2})^{\frac{2}{d+4}}N^{\frac{-2}{d+4}}\sigma_{i}^{2}$$
 with $\sigma_{i}^{2}$ the variance of the $d^{th}$ variable.\\
+
+This choice of the bandwidth is a first approximation as it supposes that the density function $f$ is normal. Nevertheless, it is convenient to have a general expression of $h$ without additional computations for a better performance of the algorithm. 
 
 The estimator then finally becomes :
 $$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}{\sum_{i=1}^{N}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}$$
 \subsection{Picard's method}
-We can see from the resolution formula \eqref{resolutionFormula} that the value of $Y_{t_{k}}$ we want to compute appears on the left and on the right side of the equation. We will thus use a fixed-point argument to compute $Y_{t_{k}}$.
+We can see from the resolution formula \eqref{resolutionFormula} that the value of $Y_{t_{k}}$ we want to compute appears on the left and on the right side of the equation with an implicit expression. We will thus use a fixed-point argument to compute $Y_{t_{k}}$.
 
 \begin{prop}
 The application $\Psi : Y \rightarrow \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_k}f(t_{k},Y_{t_{k}})$ is a contraction of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$ for a small $\Delta_{t_{k}}$.
 \end{prop}
 
 \begin{proof}
-Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. Let us remind that $f(t,Y_t)=-rY_t$. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
-$$=\Delta_{t_{k}}r |Y_{2}-Y_{1}|\leq \Delta_{t_{k}} C_{r}|Y_{2}-Y_{1}|$$
-where $C_{r}$ is a constant depending on $r$.
+Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. Let us remind that $f$ satisfies Lipschitz conditions. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
+$$\leq \Delta_{t_{k}} C|Y_{2}-Y_{1}|$$
+where $C$ is the Lipschitz constant.
 \end{proof}
 Thanks to this, we can apply Picard iterations to find $Y_{t_{k}}$. The methodology is the following:
 \begin{itemize}
@@ -395,47 +391,32 @@ We stop the iterations when the value seems to have converged, \textit{ie} when 
 \label{subsec:computation-0}
 At time $t=0$, the resolution formula \eqref{resolutionFormula} becomes $$Y_{t_{0}} = \mathbb{E}(Y_{t_{1}}|\mathcal{F}_{t_{0}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})=\mathbb{E}(Y_{t_{1}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})$$
 No more kernel estimation is then needed, the computation of $Y_{t_{0}}$ only requires the computation of an expectation (which is approximated by the mean of the vector $(Y_{t_1,i})_{i=1,\ldots,N}$) and Picard iterations. We use the Monte Carlo estimator :
-$$Y_{t_{0}} = \frac{1}{N}\sum_{i=1}^{N}Y_{1,i}-r\Delta_{t_{0}}Y_{t_{0}}$$
-\subsection{Computation of the delta of the option}
-As explained in \ref{subsec:choice-of-f}, the process $(\Delta_t)_{0 \leq t \leq T}$ is given by $\Delta_t=\frac{Z_t}{\sigma S_t}$. In order to compute $\Delta_{t_0}$, we then have to compute $Z_{t_0}$.
-Let us rewrite equation \ref{eq:Y_t} multiplied by $\Delta W_{t_k} = W_{t_k+1}-W_{t_k}$ and taken with the conditional expectation $\mathbb{E}(.|F_{t_k})$:
-$$\begin{aligned}
-\mathbb{E}(\Delta W_{t_k} Y_{t_{k}}|F_{t_k}) =& \mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k}) + \mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds~\bigg\vert~F_{t_k}\right) \\ 
-&-\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}~\bigg\vert~F_{t_k}\right)
-\end{aligned}$$
+$$Y_{t_{0}} = \frac{1}{N}\sum_{i=1}^{N}Y_{1,i}+\Delta_{t_{0}}f(t_0,Y_{t_{0}})$$
 
-This can be written :
-$$\begin{aligned}
-Y_{t_{k}}\mathbb{E}(\Delta W_{t_k}) =& \mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k}) + \mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds\right) \\
-&-\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}~\bigg\vert~F_{t_k}\right)
-\end{aligned}$$
+\subsection{Choice of the driver function}
+\label{subsec:choice-of-f}
+In the case of a pricing under the risk-neutral probability, it is possible to find the explicit expression of the driver function in the backward equation (this function was noted $f$) and to give more intuition about what the process $(Z_{t})_{t\geq0}$ represents, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose fixed rate is the risk-free rate $r$. The value of the portfolio then evolves like:
+$$\begin{cases}
+dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}dS_{t}\\
+ \\
+dS_{t}=rS_t\text{d}t+\sigma S_t\text{d}W_{t}
+\end{cases}$$
+which gives:
+$$dY_{t} = rY_{t}\text{d}t + \sigma a_{t}S_{t}\text{d}W_{t}$$
+The process $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
+The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
 
-We know that :
-\begin{itemize}
-    \item $\mathbb{E}(\Delta W_{t_k})=0$
-    \item $\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds\right)=\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds \mathbb{E}(\Delta W_{t_k})=0$
-    \item $\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}|F_{t_k}\right) \simeq \mathbb{E}(\Delta W_{t_k}^2 Z_{t_k}|F_{t_k}) = Z_{t_k} \mathbb{E}(\Delta W_{t_k}^2|F_{t_k}) = Z_{t_k} \mathbb{E}(\Delta W_{t_k}^2) = Z_{t_k} \Delta_{t_k}$
-\end{itemize}
-
-We can then compute $Z_{t_k}$ for each $t_{k}$ with the following formula :
-\begin{equation}
-    Z_{t_k} \simeq \frac{1}{\Delta_{t_k}}\mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k})
-\end{equation}
-
-And $\Delta_{t_0}$ is given by :
-$$\Delta_{t_0} \simeq \frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}}|F_{t_0})=\frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}})$$
-
-\section{Resolution of a double reflected BSDE}
+\section{Resolution of a reflected BSDE}
 \subsection{Motivations}
 There are two aspects of the callable Barrier Reverse Convertible that can not be included in the final payoff. These are the coupons that can be paid throughout the whole life of the asset, and the callability of the BRC that can be activated at determined times before maturity. This can introduce some discontinuity in the price of the asset, which we tried to integrate in our modeling with reflected forward-backward stochastic differential equations.
 \subsection{Description of the new problem and resolution}
 We define the following set of equations :
 $$S_{t}=S_{0} + \int_{0}^{t}b(s,S_{s})ds + \int_{0}^{t}\sigma(s,S_{s})dW_{s}$$
 $$Y_{t}=\Phi(S_{T})+\int_{t}^{T}f(s,Y_{s},Z_{s})ds+(K_{T}^{+}-K_{t}^{+})+(K_{T}^{-}-K_{t}^{-})-\int_{t}^{T}Z_{s}dW_{s}$$
-$$\forall t\leq T, L_{t}\leq Y_{t}\leq U_{t} \text{ with }$$ $$\int_{0}^{T}(Y_{s}-L_{s})dK_{s}^{+}=\int_{0}^{T}(U_{s}-Y_{s})dK_{s}^{+}=0$$
-as a double reflected forward backward stochastic differential equation (double RFBSDE).
+$$\forall t\leq T, Y_{t}\leq U_{t} \text{ with } \int_{0}^{T}(U_{s}-Y_{s})dK_{s}^{+}=0 $$
+as a reflected forward backward stochastic differential equation (RFBSDE) with a jump process $(K_{t}^{+})_{0\leq t \leq T}$.
 
-The processes $(L_{t})_{0\leq t \leq T}$ and $(U_{t})_{0\leq t \leq T}$ are called the obstacles and the processes $(K_{t}^{+})_{0\leq t \leq T}$ and $(K_{t}^{-})_{0\leq t \leq T}$ are here to "push" the price respectively above and below those obstacles. \\
+The process $(U_{t})_{0\leq t \leq T}$ is called the obstacle and the process $(K_{t}^{-})_{0\leq t \leq T}$ is here to "push" the price below this obstacle (in our case to push the price to the call level if the asset is called). The jump process $(K_{t}^{+})_{0\leq t \leq T}$ is here to include the coupons in the price when necessary. \\
 
 The first step to resolve this new problem is to resolve the unreflected BSDE on the time interval $[t_{k-1},t_{k}]$, just as we described in the previous section. We then compute : $$\widetilde{\widetilde{Y}}_{t_{k-1}}=Y_{t_{k}}+\int_{t_{k-1}}^{t_{k}}f(s,Y_{s},Z_{s})ds-\int_{t_{k-1}}^{t_{k}}Z_{s}dW_{s}$$
 
@@ -444,12 +425,11 @@ Finally, if the date $t_{k-1}$ is a call date, we have to make sure that the pri
 $$U_{t_{k-1}}=
 \begin{cases}
 \text{Value of the call} & \text{if } \widetilde{Y}_{t_{k-1}}\geq \text{Value of the call }\\
-0& \text{otherwise }
+\widetilde{Y}_{t_{k-1}}& \text{otherwise }
 \end{cases}$$
 
 And $Y_{t_{k-1}}=\min(\widetilde{Y}_{t_{k-1}},U_{t_{k-1}})$. We can define $K_{t_{k-1}}=Y_{t_{k-1}}-\widetilde{Y}_{t_{k-1}}$ so that $(K_{t})_{0\leq t\leq T}$ sticks with its definition.
 
-\newpage
 \section{Taking into account the risk of default}
 The price of the asset still doesn't include the probability of default of the issuer. In order to do that we have to multiply the price by the survival probability of the issuer.\\
 
@@ -491,6 +471,36 @@ We can summarize the pricing methodology we use for callable barrier reverse con
     \item \textbf{Compute the price at $t=0$} as described in \ref{subsec:computation-0}
     \item \textbf{Take into account the default risk}, \textit{ie} multiply the price by the survival probability of the issuer
 \end{enumerate}
+
+\section{Computation of the delta of the option}
+In addition to the pricing can be computed the delta of the option very easily. Indeed, as explained in \ref{subsec:choice-of-f}, the delta is the process $(a_t)_{0 \leq t \leq T}$ given by $a_t=\frac{Z_t}{\sigma S_t}$. In order to compute $\a_{t_0}$, we then have to compute $Z_{t_0}$.
+Let us rewrite equation \ref{eq:Y_t} multiplied by $\Delta W_{t_k} = W_{t_k+1}-W_{t_k}$ and taken with the conditional expectation $\mathbb{E}(.|F_{t_k})$:
+$$\begin{aligned}
+\mathbb{E}(\Delta W_{t_k} Y_{t_{k}}|F_{t_k}) =& \mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k}) + \mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds~\bigg\vert~F_{t_k}\right) \\ 
+&-\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}~\bigg\vert~F_{t_k}\right)
+\end{aligned}$$
+
+This can be written :
+$$\begin{aligned}
+Y_{t_{k}}\mathbb{E}(\Delta W_{t_k}) =& \mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k}) + \mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds\right) \\
+&-\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}~\bigg\vert~F_{t_k}\right)
+\end{aligned}$$
+
+We know that :
+\begin{itemize}
+    \item $\mathbb{E}(\Delta W_{t_k})=0$
+    \item $\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds\right)=\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds \mathbb{E}(\Delta W_{t_k})=0$
+    \item $\mathbb{E}\left(\Delta W_{t_k} \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}|F_{t_k}\right) \simeq \mathbb{E}(\Delta W_{t_k}^2 Z_{t_k}|F_{t_k}) = Z_{t_k} \mathbb{E}(\Delta W_{t_k}^2|F_{t_k}) = Z_{t_k} \mathbb{E}(\Delta W_{t_k}^2) = Z_{t_k} \Delta_{t_k}$
+\end{itemize}
+
+We can then compute $Z_{t_k}$ for each $t_{k}$ with the following formula :
+\begin{equation}
+    Z_{t_k} \simeq \frac{1}{\Delta_{t_k}}\mathbb{E}(\Delta W_{t_k} Y_{t_{k+1}}|F_{t_k})
+\end{equation}
+
+And $a_{t_0}$ is given by :
+$$a_{t_0} \simeq \frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}}|F_{t_0})=\frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} Y_{t_{1}})$$
+
 
 %--------------------------------------------------------------------------
 %	Chapter 3
@@ -1181,7 +1191,7 @@ The main objective of this report was the pricing of a structured product called
 
 The quality of the results depends on several factors. For example, the longer the maturity of the asset, the less precise the price. The number of underlyings also plays a role in the accuracy of the results. Globally, the price we obtain is slightly overestimated compared with the bid and ask prices. This could be due to the flaws of our methodology and the unrealistic assumptions we made, but also to the kernel regression (which raises the question of a better bandwidth choice) that can affect the precision in corner cases.
 
-In order to improve our results, we added a term-structure to the volatility, picking up the values for different tenors on Bloomberg and interpolating between those tenors with a rational quadratic spline interpolation. The results are rather mitigated ; if simple BRC's prices are more accurately estimated, this improvement of the methodology does not seem to evict the difficulties to estimate low barrier prices. Further research should then focus on a better conditional expectation estimation as well as volatility modeling in order to improve the pricing.
+In order to improve our results, we added a term-structure to the volatility, picking up the values for different tenors on Bloomberg and interpolating between those tenors with a rational quadratic spline interpolation. The results are rather mitigated ; if simple BRC's prices are more accurately estimated, this improvement of the methodology does not seem to evict the difficulties to estimate low barrier prices. Further research should therefore focus on a better conditional expectation estimation as well as volatility modeling in order to improve the pricing.
 
 
 
