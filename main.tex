@@ -135,11 +135,11 @@ Caroline \textsc{OSTER}
 \addcontentsline{toc}{chapter}{Introduction}
 \vspace*{-2cm}
 
-Structured products represent an attractive alternative to classical securities and direct investments such as bonds, equities, commodities etc. Issued by a bank or by an insurance company, they are generally composed of 2 elements, one ensuring the capital protection, and one boosting the yield. They were created to meet specific needs and can be used to reduce, mitigate and control the risks of a portfolio. In Switzerland, markets are particularly driven by structured products with CHF 190 billions invested in those kinds of securities at Swiss banks, which makes about 5\% of the total assets managed in the country \cite{SSPA}.
+Structured products represent an attractive alternative to classical securities and direct investments such as bonds, equities, commodities etc. Issued by a bank or by an insurance company, they are often composed of 2 elements, one ensuring the capital protection, and one boosting the yield. They were created to meet specific needs and can be used to reduce, mitigate and control the risks of a portfolio. In Switzerland, markets are particularly driven by structured products with CHF 190 billions invested in those kinds of securities at Swiss banks, which makes about 5\% of the total assets managed in the country \cite{SSPA}.
 
 In this report, we will focus on a particular structured product called Barrier Reverse Convertible (BRC). A BRC is a kind of reverse convertible security linked to an underlying stock that can be either an equity or an index. The capital repayment is made at maturity ; it can be 100\% of the principal if the underlying stock has not reached a predetermined barrier and less otherwise. A BRC also pays highly-rated coupons that enhance the attractiveness of the product.
 
-Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market to move upward. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{The Swiss Market Index (SMI) is Switzerland's stock market index made of 20 of the largest and most liquid stocks. Here, we use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be better explained further in this report.
+Reverse convertible securities are among the most popular products in Switzerland in terms of risk-optimization, especially if the investor expects the market not to move downwards. In order to illustrate that, we present in Figure \ref{fig:median-returns-BRC} the median returns of Swiss BRCs p.a. from 2008 to 2014 \cite{SSPA-study} and compare it with the evolution of the SMI index during the same period\footnote{The Swiss Market Index (SMI) is Switzerland's stock market index made of 20 of the largest and most liquid stocks. Here, we use this index as a proxy for the Swiss market.}. We can see that the median return of the BRCs seems effectively to be positively correlated with the index trend. As the volatility is generally decreasing with the stock price getting higher, this could also mean that someone investing in a BRC would expect lower volatility in the future. The mechanisms hidden behind those observations will be explained more in detail later in this report.
 
 \begin{figure}[H] 
     \centering
@@ -148,9 +148,9 @@ Reverse convertible securities are among the most popular products in Switzerlan
     \label{fig:median-returns-BRC}
 \end{figure}
 
-The main concern of this report is the pricing of a Barrier Reverse Convertible with a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of reflected forward-backward stochastic differential equations to model and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modeling chosen and provides rather good performances in terms of accuracy and velocity of the convergence. \\
+The main concern of this report is the pricing of a Barrier Reverse Convertible which has a possibility to be called by the issuer at certain dates precised in the contract. Indeed, this kind of particularity brings a complexity to the product that prevents from pricing with a basic Monte Carlo methodology. We thus considered the problem in a backward manner and used a system of reflected forward-backward stochastic differential equations to model and compute the price. The pricing has been made under the Black-Scholes model and the no-arbitrage assumption, which is easily manageable with the modeling chosen and provides rather good performances in terms of accuracy and convergence speed. \\
 
-First will be introduced the exact definition of a callable BRC, and then the pricing methodology used for this asset. Finally we will present our results and some possible extensions we considered.  
+First, we will introduce the exact definition of a callable BRC. Then, we will detail the pricing methodology used for this asset. Finally we will present our results and some possible extensions we considered.  
 
 
 
@@ -163,7 +163,7 @@ First will be introduced the exact definition of a callable BRC, and then the pr
 \chapter{Description of a callable barrier reverse convertible}
 
 \section{Definition of a Standard Reverse Convertible}
-In order to understand what a Barrier Reverse Convertible is, we will first give a brief definition of a Standard Reverse Convertible : this kind of financial instrument is a bond-like security which pays a coupon that is generally very high compared to the "risk-free" interest rate. This bond is combined with a short put option, as can be seen in \ref{fig:RC-payoff}.
+In order to understand what a Barrier Reverse Convertible is, we will first give a brief definition of a standard Reverse Convertible : this kind of financial instrument is a bond-like security which pays a coupon that is generally very high compared to the "risk-free" interest rate. This bond is combined with a short put option, as it can be seen in figure \ref{fig:RC-payoff}.
 
 \begin{figure}[!h]
     \centering
@@ -175,18 +175,18 @@ In order to understand what a Barrier Reverse Convertible is, we will first give
 The payment is made as follows: if the price of the underlying ends above the strike at maturity, the nominal is given back as the final payoff. In this case, the final payoff is called the cap. On the contrary, if the price of the underlying ends under the strike at maturity, the final payoff is the cap reduced by the difference between the strike and the final price. All the coupons are paid during the lifetime of the asset.\\
 
 Let us denote $K$ the strike of the asset, $T$ the maturity and $S_{t}$ the level of the underlying at time $t$. The final payoff $P$ can hence been expressed as follows :
-$P=\text{cap}-(K-S_{T})_{+}$.\\
+$$P=\text{cap}-(K-S_{T})_{+}$$
 
 With this kind of security, the investor generally expects the market to move higher or at least to remain stable, so he doesn't lose his capital and makes benefits with high coupons. Moreover, a Reverse Convertible can be beneficial if the volatility is expected to decrease or to stay low in the future, as the investor is mainly shorting volatility.
 
 \section{Definition of a Barrier Reverse Convertible}
 \label{sec:BRC-definition}
 
-The Barrier Reverse Convertible is slightly different because it has a barrier on the level of the underlying : if the underlying doesn't reach the barrier during the lifetime of the asset, the nominal is given back at the end, but in the case it is, the put is activated and the final payoff is the one of a short put. Of course, coupons are paid according to the terms of the contract. The main difference with the Reverse Convertible is thus the path-dependency of the asset. \\
+The Barrier Reverse Convertible is slightly different because it has a barrier associated to the level of the underlying : if the underlying doesn't reach the barrier during the lifetime of the asset, the nominal is given back at the end, but in the case it is, the put is activated and the final payoff is the one of a short put. Of course, coupons are paid according to the terms of the contract. The main difference with the Reverse Convertible is thus the path-dependency of the asset (we only deal here with continuous barriers). \\
 
 Figure \ref{fig:BRC-payoff} summarizes the payoff profile of a Barrier Reverse Convertible:
 
-\begin{figure}[!h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.65]{images/BRC.png}
     \caption{Payoff profile of a \textit{Barrier Reverse Convertible}. Source : \cite{lindauer2008pricing}}
@@ -202,13 +202,14 @@ Multi \textit{Barrier Reverse Convertibles} are a type of Barrier Reverse Conver
 \begin{itemize}
     \item \textbf{"WorstOf" case}: in this case, the underlying chosen to be compared with the barrier (or the strike) is the one with the worst performance regarding the barrier (or the strike).
     \item \textbf{"BestOf" case}: in this case, the underlying chosen to be compared with the barrier (or the strike) is the one with the best performance regarding the barrier (or the strike).
-    \item \textbf{"Basket" case}: in this case, a linear combination of the performances of the underlyings is chosen to be compared with the barrier (or the strike).
 \end{itemize}
 
-The choice of the underlying to be compared with the barrier can be different from the one to be compared with the strike, which allows 9 different types of multi BRCs.
+The choice of the underlying to be compared with the barrier can be different from the one to be compared with the strike, which allows 4 different types of multi BRCs. Nevertheless, the most common type of multi BRC is "WorstOf" for the barrier and for the payoff. 
 
 \section{Adding the callability}
-To the regular (multi) BRCs can be added the callability by the issuer. This means that the issuer can buy back the contract at several dates and at a certain amount specified in the contract. The amount of this redemption is generally the nominal plus the on-going coupon.
+To the regular (multi) BRCs can be added the callability by the issuer. This means that the issuer can buy back the contract at several dates and at a certain amount specified in the contract. The amount of this redemption is generally the nominal plus the on-going coupon.\\
+
+This is a way for the issuer to be protected from decreasing interest rates because in this case, he can buy back his product and sell a new BRC with lower coupons. For the investor, this is also interesting as he will get a bit more coupons to compensate the interest rate risk.
 
 %--------------------------------------------------------------------------
 %	Chapter 2 
@@ -220,27 +221,27 @@ To the regular (multi) BRCs can be added the callability by the issuer. This mea
 \label{chap:pricing-methodology}
 The price of the asset has to be known at all the times of possible redemption by the issuer to determine whether the asset will be called or not at those dates (we suppose that the issuer activates the callability if the call level is higher than the expected discounted cash flows at that date). Because of the multi-dimensionality of the asset, a first and naive approach would be to use a Monte Carlo method, but this would imply to compute a new Monte Carlo at each call dates to ascertain the behavior of the issuer, which would be computationally too long and too complex to be efficient. 
 
-A better solution would be to proceed in a backward manner, beginning with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Swartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.
+A better solution would be to proceed in a backward manner, beginning with the price at maturity (which is known thanks to the explicit final payoff profile) and coming back to the price at $t=0$ step by step. With this approach, inspired by the Longstaff-Schwartz algorithm \cite{schwartz2001valuing}, the price can be known at all the possible redemption times.
 
 Hence, the modeling chosen here is a forward-backward stochastic differential equation system. The forward component, which only represents the diffusion of the underlyings, will be resolved in a classical way whereas solving the backward component will allow us to compute the price, taking into account the coupons and the callability at each time step.
 
-The whole methodology will be described in this chapter. First, we will present the modeling chosen to solve the problem considered, and justify the hypothesis made within this context. Then will be explained the forward equation resolution, the final payoff computation and the computation of the price in a backward manner.
+The whole methodology will be described in this chapter. First, we will present the modeling chosen to solve the problem considered, and justify the hypothesis made within this context. Then, we will explain the forward equation resolution, the final payoff computation and the computation of the price in a backward manner.
 
 
 \section{Presentation of the SDE system}
 \label{sec:SDE-presentation}
 As explained above, the objective is to compute the solution of  a forward-backward stochastic differential equation (FBSDE) which can be written as follow :
 $$\begin{cases}
-S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})ds +\int_{0}^{t} \sigma(s,S_{s})dW_{s}\\
+S_{t} = S_{0}+\int_{0}^{t}b(s,S_{s})\text{d}s +\int_{0}^{t} \sigma(s,S_{s})\text{d}W_{s}\\
  \\
-Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})ds -\int_{t}^{T}Z_{s}dW_{s}
+Y_{t} = \Phi(\textbf{S}) + \int_{t}^{T}f(s,Y_{s},Z_{s})\text{d}s -\int_{t}^{T}Z_{s}\text{d}W_{s}
 \end{cases}$$
-$\textbf{S}=(S_{t})_{t\geq0}$ is a d-dimensional stochastic variable. It is the forward component of the system which represents the underlyings. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time t and is uni-dimensional.\\
-The process $W$ is a d-dimensional brownian motion defined on a probability space $(\Omega,\mathcal{F},\mathbb{P})$ provided with its natural filtration $(\mathcal{F)}_{t}$ and generated by $W$. 
+$\textbf{S}=(S_{t})_{t\geq0}$ is a $d$-dimensional stochastic variable. It is the forward component of the system which represents the underlyings. $(Y_{t})_{t\geq0}$ represents the value of a replicating portfolio at time $t$ and is uni-dimensional.\\
+The process $W$ is a $d$-dimensional brownian motion defined on a probability space $(\Omega,\mathcal{F},\mathbb{P})$ provided with its natural filtration $(\mathcal{F)}_{t}$ and generated by $W$. 
 $T$ is the maturity of our asset in year fraction.\\
 
-The function $f$ is called the driver function. It must be uniformly Lipschitz, \textit{ie} there must exist a constant $C$ such that :
-$$\forall (y_{1},z_{1}),(y_{2},z_{2}), |f(t,y_{1},z_{1})-f(t,y_{2},z_{2})|\leq C(|y_{1}-y_{2}|+|z_{1}-z_{2}|)$$
+The function $f$ is called the driver function. It must be uniformly Lipschitz, \textit{i.e.} there must exist a constant $C$ such that :
+$$\forall (t, y_{1},z_{1}, y_{2},z_{2}),~ |f(t,y_{1},z_{1})-f(t,y_{2},z_{2})|\leq C(|y_{1}-y_{2}|+|z_{1}-z_{2}|)$$
 
 Antonelli \cite{antonelli1993backward} proved the existence of such a solution using a fixed point theorem when the function $b$ does not depend on $(Z_{t})_{t\geq0}$ (which is our case) and under the condition $CT<1$ with $C$ the Lipschitz constant of $f$. In our case, $C$ is the risk free rate (see \ref{subsec:choice-of-f}); it is small enough so that this condition is almost always verified.\\
 
@@ -259,7 +260,7 @@ $$
 where $r$ is the risk free rate.
 If we take a time grid $(t_{0},t_{1},\ldots,t_{m})$, we know that the solution of that stochastic equation can be discretized as follows :
 $$\begin{cases}
-\forall k=1,\ldots,m,  S_{t_{k}}^{i}=S_{t_{k-1}}^{i}e^{(r-\frac{\sigma_{i}^{2}}{2})(t_{k}-t_{k-1})+\sigma_{i}W_{t_{k}}^{i}}\\
+\forall k=1,\ldots,m,~ S_{t_{k}}^{i}=S_{t_{k-1}}^{i}\exp\left((r-\frac{\sigma_{i}^{2}}{2})(t_{k}-t_{k-1})+\sigma_{i}W_{t_{k}}^{i}\right)\\
 S_{t_{0}}^{i}=s_{0}^{i} 
 \end{cases}
 $$
@@ -269,7 +270,7 @@ with $W_{t_{k}}^{i} \sim \mathcal{N}(0,t_{k}-t_{k-1})$.\\
 Moreover, the brownian motions are all correlated : $$\forall (i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\},~ \text{d}\langle W^{i},W^{j}\rangle_t=\rho_{ij}\text{d}t$$
 In order to take into account these correlations, we should generate the brownian motions with a multivariate Gaussian distribution with correlation matrix $\Sigma=(\rho_{ij})_{(i,j) \in \{1,\ldots,d\}\times\{1,\ldots,d\}}$.\\
 
-The first step is to generate $d$ independent realizations of a standard normal distribution in a matrix $M$. Then, we should decompose $M$ by Cholesky, \textit{ie} we should calculate the matrix $C$ such that $CC^{T}=\Sigma$. To do so, the matrix $\Sigma$ has to be definitive positive, which is not always the case. \\
+The first step is to generate $d$ independent realizations of a standard normal distribution in a matrix $M$. Then, we should decompose $M$ by Cholesky, \textit{i.e.} we should calculate the matrix $C$ such that $CC^{T}=\Sigma$. To do so, the matrix $\Sigma$ has to be definitive positive, which is not always the case. \\
 
 \begin{tcolorbox}[breakable,colback=cyan,opacityfill=0.05,colframe=blue,width=\dimexpr\textwidth+12mm\relax,enlarge left by=-6mm]
 \begin{center}
@@ -278,9 +279,9 @@ The first step is to generate $d$ independent realizations of a standard normal 
 \end{center}
 \begin{enumerate}
     \item Diagonalize the matrix $\Sigma$, \textit{ie} find $P$ an invertible matrix and $D$ a diagonal matrix such that $\Sigma=PDP^{-1}$
-    \item Let $(d_{ii})_{i \in \{1,\ldots,d\}}$ be the diagonal elements of the matrix $D$. We calculate : $$\forall i=1,\ldots,d, d_{ii}^{*}=\begin{cases}
+    \item Let $(d_{ii})_{i \in \{1,\ldots,d\}}$ be the diagonal elements of the matrix $D$. We calculate : $$\forall i=1,\ldots,d,~ d_{ii}^{*}=\begin{cases}
         d_{ii}& \text{ if } d_{ii}>0 \\
-        \epsilon& \text{ if } d_{ii}\leq0
+        \varepsilon& \text{ if } d_{ii}\leq0
     \end{cases}$$
  \item Writing $D^{*}$ the diagonal matrix with $d_{ii}^{*}$ the diagonal elements, we can compute $$\Sigma^{*}=PD^{*}P^{-1}$$ where $\Sigma^{*}$ is the corrected definite positive matrix.
 \end{enumerate}
@@ -290,13 +291,13 @@ Once the matrix $C$ is computed, we can calculate the matrix $Z=CM$ which gives 
 \label{subsec:brownian-bridge}
 The problem of the discretization of the forward equation is that we lose the continuous monitoring of the BRC's barrier. In order to capture the continuity of the barrier without using a very high number of steps in the time grid, we decided to use brownian bridges.\\
 
-Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by \footnote{See Appendix \ref{appendix:brownian-bridge} for the proof of this formula}:
+Let's first reason with only one underlying $(S_{t})_{t\geq0}$ of volatility $\sigma$. The probability to reach down the barrier $B$ between $t_{k}$ and $t_{k+1}$, knowing that $S_{t_{k}}=x$ and $S_{t_{k+1}}=y$, is given by \footnote{See Appendix \ref{appendix:brownian-bridge} for the proof of this formula}
 $$\phi(x,y,t_{k+1}-t_k,B,\sigma) = 
 \begin{cases}
 1 &\text{ if } x\leq B \text{ or } y\leq B \\
-\exp(-2\frac{\log(\frac{x}{B})\log(\frac{y}{B})}{\sigma^{2}(t_{k+1}-t_k)}) &\text{ otherwise }
+\exp\left(-2\frac{\log(\frac{x}{B})\log(\frac{y}{B})}{\sigma^{2}(t_{k+1}-t_k)}\right) &\text{ otherwise }
 \end{cases}$$
-The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=\phi(S_{t_{i}},S_{t_{i+1}},(t_{i+1}-t_i),B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows :
+The probability that the underlying has not touched the barrier during the whole lifetime of the asset is then $p=\prod_{i=1}^{m}(1-p_{i})$ where $p_{i}=\phi(S_{t_{i}},S_{t_{i+1}},(t_{i+1}-t_i),B,\sigma_{i})$. When computing the payoff, one has to take into account this probability as follows
 $$\Phi(S) = \text{cap} -(K-S_{T})_{+}(1-p)$$
 
 When it comes to several underlyings, the computation of $p$ becomes harder. As explained in \ref{sec:multi-BRC-definition}, the barrier can be a \textit{WorstOf} or a \textit{BestOf}. This means that there exists 4 cases :
@@ -309,29 +310,29 @@ When it comes to several underlyings, the computation of $p$ becomes harder. As 
     
     \item \textbf{The barrier is a \textit{BestOf} and is up} : this situation is the same as the first one so  $p_{i}=1-\prod_{j=1}^{d}(1-p_{i}^{j})$
 \end{enumerate}
-Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not generally the case\footnote{This is a first approximation that could be improved for example with the Large Deviation Theory that relies on the asymptotic behaviors of probability distributions. For more information on that subject, see \cite{baldi1995exact}, \cite{baldi1999pricing} and \cite{huh2008computation}}.
+Note that in order to compute those probabilities, we have made the strong assumption of independence between the different underlyings, which is not generally the case\footnote{This is a first approximation that could be improved for example with the Large Deviation Theory that relies on the asymptotic behaviors of probability distributions. For more information on that subject, see \cite{baldi1995exact}, \cite{baldi1999pricing} and \cite{huh2008computation}}. A small time step can be chosen in order to mitigate the errors due to this assumption.
 \section{Resolution of the backward equation}
 \subsection{Resolution formula}
 Let us rewrite the backward equation at $t_{k}$ and $t_{k+1}$, two consecutive times in the time grid :
-$$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) ds - \int_{t_{k}}^{T} Z_{s} dW_{s}$$
-$$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) ds - \int_{t_{k+1}}^{T} Z_{s} dW_{s}$$
+$$Y_{t_{k}} = \Phi(S) + \int_{t_{k}}^{T} f(s,Y_{s}) \text{d}s - \int_{t_{k}}^{T} Z_{s} \text{d}W_{s}$$
+$$Y_{t_{k+1}} = \Phi(S) + \int_{t_{k+1}}^{T} f(s,Y_{s}) \text{d}s - \int_{t_{k+1}}^{T} Z_{s} \text{d}W_{s}$$
 Now let's make the difference between both :
 \begin{equation}
-    Y_{t_{k}} = Y_{t_{k+1}} + \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds - \int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}
+    Y_{t_{k}} = Y_{t_{k+1}} + \int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) \text{d}s - \int_{t_{k}}^{t_{k+1}}Z_{s} \text{d}W_{s}
     \label{eq:Y_t}
 \end{equation}
-Let $(\mathcal{F}_{t})_{t\geq0}$ be a filtration so that $(Y_{t})_{t\geq0}$ and $(S_{t})_{t\geq0}$ are adapted, and let's apply $\mathbb{E}(.|\mathcal{F}_{t_{k}})$ to the previous equation :
-$$\mathbb{E}(Y_{t_{k}}|\mathcal{F}_{t_{k}}) = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \mathbb{E}\left(\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) ds~\bigg\vert~\mathcal{F}_{t_{k}}\right) - \mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}~\bigg\vert~\mathcal{F}_{t_{k}}\right)$$
+Let $(\mathcal{F}_{t})_{t\geq0}$ be a filtration so that $(Y_{t})_{t\geq0}$ and $(S_{t})_{t\geq0}$ are adapted, and let's apply $\mathbb{E}(\cdot|\mathcal{F}_{t_{k}})$ to the previous equation :
+$$\mathbb{E}(Y_{t_{k}}|\mathcal{F}_{t_{k}}) = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \mathbb{E}\left(\int_{t_{k}}^{t_{k+1}} f(s,Y_{s}) \text{d}s~\bigg\vert~\mathcal{F}_{t_{k}}\right) - \mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}Z_{s} \text{d}W_{s}~\bigg\vert~\mathcal{F}_{t_{k}}\right)$$
 
-The last term is equal to zero because $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s}|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s})$ thanks to the independence, and $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}Z_{s} dW_{s})=0$ as being the expectation of an Ito's integral.\\
-For the deterministic term, we have $\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds|\mathcal{F}_{t_{k}})=\mathbb{E}(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds) = \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds$.
+The last term is equal to zero because $\mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}Z_{s} \text{d}W_{s}|\mathcal{F}_{t_{k}}\right)=\mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}Z_{s} \text{d}W_{s}\right)$ thanks to the independence, and $\mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}Z_{s} \text{d}W_{s}\right)=0$ as being the expectation of an Ito's integral.\\
+For the deterministic term, we have $\mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) \text{d}s|\mathcal{F}_{t_{k}}\right)=\mathbb{E}\left(\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) \text{d}s\right) = \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) \text{d}s$.
 We thus have :
 \begin{equation}
-    Y_t = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) ds
+    Y_t = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) \text{d}s
 \end{equation}
 Let us denote $\Delta_{t_k}=t_{k+1}-t_{k}$. We will consider the following approximation for the integral :
-$$\int_{t_{k}}^{t_{k+1}}f(s,Y_{s})ds \simeq \Delta_{t_{k}}\theta f(t_{k},Y_{t_{k}}) + \Delta_{t_{k}}(1-\theta) f(t_{k+1},Y_{t_{k+1}})$$
-and choose $\theta=1$. The resolution formula becomes :
+$$\int_{t_{k}}^{t_{k+1}}f(s,Y_{s}) \text{d}s \simeq \Delta_{t_{k}}\theta f(t_{k},Y_{t_{k}}) + \Delta_{t_{k}}(1-\theta) f(t_{k+1},Y_{t_{k+1}})$$
+and choose $\theta=1$\footnote{This choice has been motivated by \cite{gobet2005regression}, which mainly focus on the numerical resolution of backward stochastic differential equations.}. The resolution formula becomes :
 \begin{equation}
 Y_{t_{k}} = \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}) + \Delta_{t_{k}}f(t_{k},Y_{t_{k}})
 \label{resolutionFormula}
@@ -347,12 +348,12 @@ This method consists in the estimation of $\mathbb{E}(Y|X=x)$ for a given $x$. T
 with $N$ being the number of observations drawn independently and $K_h$ the kernel.\\
 
 \begin{proof}
-The conditional expectation can be written $$\mathbb{E}(Y|X=x)=\int yf(y|x)dy = \int y\frac{f(x,y)}{f(x)}dy$$
+The conditional expectation can be written $$\mathbb{E}(Y|X=x)=\int yf(y|x) \text{d}y = \int y\frac{f(x,y)}{f(x)} \text{d}y$$
 We can then use the kernel density estimation for $f(x,y)$ and $f(x)$ with a kernel $K_{h}$ whose bandwidth is $h$ : $$\hat{f}(x,y) = \frac{1}{N}\sum_{i=1}^{N}K_{h}(x-x_{i})K_{h}(y-y_{i})$$
 $$\hat{f}(x) = \frac{1}{N}\sum_{i=1}^{N}K_{h}(x-x_{i})$$
 
-We get $$\hat{\mathbb{E}}(Y|X=x) = \int y\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})K_{h}(y-y_{i})}{\sum_{i=1}^{N}K_{h}(x-x_{i})}dy$$
-$$=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})\int y K_{h}(y-y_{i})dy }{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
+We get $$\hat{\mathbb{E}}(Y|X=x) = \int y\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})K_{h}(y-y_{i})}{\sum_{i=1}^{N}K_{h}(x-x_{i})} \text{d}y$$
+$$=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})\int y K_{h}(y-y_{i}) \text{d}y }{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
 $$=\frac{\sum_{i=1}^{N}K_{h}(x-x_{i})y_{i}}{\sum_{i=1}^{N}K_{h}(x-x_{i})}$$
 \end{proof}
 
@@ -368,7 +369,7 @@ with $\sigma_{i}^{2}$ the variance of the $d^{th}$ variable.\\
 This choice of the bandwidth is a first approximation as it supposes that the density function $f$ is normal. Nevertheless, it is convenient to have a general expression of $h$ without additional computations for a better performance of the algorithm. 
 
 The estimator then finally becomes :
-$$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}{\sum_{i=1}^{N}e^{-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}}}$$
+$$\hat{m}_{H}(x)= \frac{\sum_{i=1}^{N}y_{i}\exp\left(-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}\right)}{\sum_{i=1}^{N}\exp\left(-\frac{1}{2}(\frac{4}{N(d+2)})^{-\frac{2}{d+4}}\sum_{j=1}^{d}\frac{(x_{j}-x_{ji})^{2}}{\sigma_{j}^{2}}\right)}$$
 \subsection{Picard's method}
 We can see from the resolution formula \eqref{resolutionFormula} that the value of $Y_{t_{k}}$ we want to compute appears on the left and on the right side of the equation with an implicit expression. We will thus use a fixed-point argument to compute $Y_{t_{k}}$.
 
@@ -377,8 +378,10 @@ The application $\Psi : Y \rightarrow \mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t_{k}}
 \end{prop}
 
 \begin{proof}
-Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. Let us remind that $f$ satisfies Lipschitz conditions. We have : $$|\Psi(Y_{2})-\Psi(Y_{1})|=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|$$
-$$\leq \Delta_{t_{k}} C|Y_{2}-Y_{1}|$$
+Let $Y_{1}$ and $Y_{2}$ be two elements of $\mathcal{L}_{2}(\mathcal{F}_{t_{k}})$. Let us remind that $f$ satisfies Lipschitz conditions. We have : $$\begin{aligned}
+|\Psi(Y_{2})-\Psi(Y_{1})|&=\Delta_{t_{k}}|f(t_{k},Y_{2})-f(t_{k},Y_{1})|\\
+&\leq \Delta_{t_{k}} C|Y_{2}-Y_{1}|
+\end{aligned}$$
 where $C$ is the Lipschitz constant.
 \end{proof}
 Thanks to this, we can apply Picard iterations to find $Y_{t_{k}}$. The methodology is the following:
@@ -386,7 +389,7 @@ Thanks to this, we can apply Picard iterations to find $Y_{t_{k}}$. The methodol
     \item $i=0$ (first iteration) : $Y_{t_{k}}=0$
     \item $i>0$ (next iterations) : $Y_{t_{k}}^{i}=\mathbb{E}(Y_{t_{k+1}}|\mathcal{F}_{t}) + \Delta_{t}f(t_{k},Y_{t_{k}}^{i-1})$
 \end{itemize}
-We stop the iterations when the value seems to have converged, \textit{ie} when the difference between two iterations is less than $\epsilon$.
+We stop the iterations when the value seems to have converged, \textit{i.e.} when the difference between two iterations is less than $\varepsilon$.
 \subsection{Computation at time $t=0$}
 \label{subsec:computation-0}
 At time $t=0$, the resolution formula \eqref{resolutionFormula} becomes $$Y_{t_{0}} = \mathbb{E}(Y_{t_{1}}|\mathcal{F}_{t_{0}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})=\mathbb{E}(Y_{t_{1}}) + \Delta_{t_{0}}f(t_{0},Y_{t_{0}})$$
@@ -397,12 +400,12 @@ $$Y_{t_{0}} = \frac{1}{N}\sum_{i=1}^{N}Y_{1,i}+\Delta_{t_{0}}f(t_0,Y_{t_{0}})$$
 \label{subsec:choice-of-f}
 In the case of a pricing under the risk-neutral probability, it is possible to find the explicit expression of the driver function in the backward equation (this function was noted $f$) and to give more intuition about what the process $(Z_{t})_{t\geq0}$ represents, we set up a self-financing portfolio $Y_{t}$ and buy $a_{t}$ stocks $S_{t}$ at time $t$. The rest of the portfolio is invested in a bond whose fixed rate is the risk-free rate $r$. The value of the portfolio then evolves like:
 $$\begin{cases}
-dY_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}dS_{t}\\
+\text{d}Y_{t} = r(Y_{t}-a_{t}S_{t})\text{d}t + a_{t}\text{d}S_{t}\\
  \\
-dS_{t}=rS_t\text{d}t+\sigma S_t\text{d}W_{t}
+\text{d}S_{t}=rS_t\text{d}t+\sigma S_t\text{d}W_{t}
 \end{cases}$$
 which gives:
-$$dY_{t} = rY_{t}\text{d}t + \sigma a_{t}S_{t}\text{d}W_{t}$$
+$$\text{d}Y_{t} = rY_{t}\text{d}t + \sigma a_{t}S_{t}\text{d}W_{t}$$
 The process $(Y_{t})_{t\geq0}$ presented in \ref{sec:SDE-presentation} is a solution of this SDE with $f(t,Y_{t})=-rY_{t}$, $Z_{t} = \sigma a_{t}S_{t}$ and the terminal condition $\Phi(S)=Y_{T}$.
 The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is the delta of the option. 
 
@@ -411,21 +414,21 @@ The hedging-strategy corresponds to $Z_{t}=\sigma S_{t} a_{t}$ where $a_{t}$ is 
 There are two aspects of the callable Barrier Reverse Convertible that can not be included in the final payoff. These are the coupons that can be paid throughout the whole life of the asset, and the callability of the BRC that can be activated at determined times before maturity. This can introduce some discontinuity in the price of the asset, which we tried to integrate in our modeling with reflected forward-backward stochastic differential equations.
 \subsection{Description of the new problem and resolution}
 We define the following set of equations :
-$$S_{t}=S_{0} + \int_{0}^{t}b(s,S_{s})ds + \int_{0}^{t}\sigma(s,S_{s})dW_{s}$$
-$$Y_{t}=\Phi(S_{T})+\int_{t}^{T}f(s,Y_{s},Z_{s})ds+(K_{T}^{+}-K_{t}^{+})+(K_{T}^{-}-K_{t}^{-})-\int_{t}^{T}Z_{s}dW_{s}$$
-$$\forall t\leq T, Y_{t}\leq U_{t} \text{ with } \int_{0}^{T}(U_{s}-Y_{s})dK_{s}^{+}=0 $$
+$$S_{t}=S_{0} + \int_{0}^{t}b(s,S_{s})\text{d}s + \int_{0}^{t}\sigma(s,S_{s})\text{d}W_{s}$$
+$$Y_{t}=\Phi(S_{T})+\int_{t}^{T}f(s,Y_{s},Z_{s})\text{d}s+(K_{T}^{+}-K_{t}^{+})+(K_{T}^{-}-K_{t}^{-})-\int_{t}^{T}Z_{s}\text{d}W_{s}$$
+$$\forall t\leq T, Y_{t}\leq U_{t} \text{ with } \int_{0}^{T}(U_{s}-Y_{s})\text{d}K_{s}^{+}=0 $$
 as a reflected forward backward stochastic differential equation (RFBSDE) with a jump process $(K_{t}^{+})_{0\leq t \leq T}$.
 
 The process $(U_{t})_{0\leq t \leq T}$ is called the obstacle and the process $(K_{t}^{-})_{0\leq t \leq T}$ is here to "push" the price below this obstacle (in our case to push the price to the call level if the asset is called). The jump process $(K_{t}^{+})_{0\leq t \leq T}$ is here to include the coupons in the price when necessary. \\
 
-The first step to resolve this new problem is to resolve the unreflected BSDE on the time interval $[t_{k-1},t_{k}]$, just as we described in the previous section. We then compute : $$\widetilde{\widetilde{Y}}_{t_{k-1}}=Y_{t_{k}}+\int_{t_{k-1}}^{t_{k}}f(s,Y_{s},Z_{s})ds-\int_{t_{k-1}}^{t_{k}}Z_{s}dW_{s}$$
+The first step to resolve this new problem is to resolve the unreflected BSDE on the time interval $[t_{k-1},t_{k}]$, just as we described in the previous section. We then compute : $$\widetilde{\widetilde{Y}}_{t_{k-1}}=Y_{t_{k}}+\int_{t_{k-1}}^{t_{k}}f(s,Y_{s},Z_{s})\text{d}s-\int_{t_{k-1}}^{t_{k}}Z_{s}\text{d}W_{s}$$
 
-Then, if the date $t_{k-1}$ is a coupon payment date, we adjust the price and $\widetilde{Y}_{t_{k-1}}= \widetilde{\widetilde{Y}}_{t_{k-1}} + K_{t_{k-1}}^{+}$ with $K_{t_{k-1}}^{+}$ the value of the coupon rate multiplied by the value of the nominal. If $t_{k-1}$ is not a coupon payment date, then $K_{t_{k-1}}^{+}=0$. \\
+Then, if the date $t_{k-1}$ is a coupon payment date, we adjust the price and $\widetilde{Y}_{t_{k-1}}= \widetilde{\widetilde{Y}}_{t_{k-1}} + K_{t_{k-1}}^{+}$ with $K_{t_{k-1}}^{+}$ the value of the coupon rate multiplied by the value of the nominal. If $t_{k-1}$ is not a coupon payment date, then $K_{t_{k-1}}^{+}=0$.\\
 Finally, if the date $t_{k-1}$ is a call date, we have to make sure that the price of the asset doesn't push up the value at which it can be bought by the issuer. Again, we have to adjust the price. We define :
 $$U_{t_{k-1}}=
 \begin{cases}
-\text{Value of the call} & \text{if } \widetilde{Y}_{t_{k-1}}\geq \text{Value of the call }\\
-\widetilde{Y}_{t_{k-1}}& \text{otherwise }
+\text{Value of the call} & \text{if } t_k \text{is a call date}\\
++\infty & \text{otherwise }
 \end{cases}$$
 
 And $Y_{t_{k-1}}=\min(\widetilde{Y}_{t_{k-1}},U_{t_{k-1}})$. We can define $K_{t_{k-1}}=Y_{t_{k-1}}-\widetilde{Y}_{t_{k-1}}$ so that $(K_{t})_{0\leq t\leq T}$ sticks with its definition.
@@ -469,7 +472,7 @@ We can summarize the pricing methodology we use for callable barrier reverse con
         \item Adjust the price with callability and compute $Y_{t_{k}} = \widetilde{Y}_{t_{k}} + K_{t_{k}}^{-}$
     \end{enumerate}
     \item \textbf{Compute the price at $t=0$} as described in \ref{subsec:computation-0}
-    \item \textbf{Take into account the default risk}, \textit{ie} multiply the price by the survival probability of the issuer
+    \item \textbf{Take into account the default risk}
 \end{enumerate}
 
 \section{Computation of the delta of the option}
@@ -506,7 +509,7 @@ $$a_{t_0} \simeq \frac{1}{\sigma \Delta_{t_k} S_{t_k}}\mathbb{E}(\Delta W_{t_0} 
 %	Chapter 3
 %--------------------------------------------------------------------------
 
-\chapter{Results: from a barrier option to a callable BRC}
+\chapter{From a barrier option to a callable BRC}
 
 \section{Simple down-in barrier}
 As explained in \ref{sec:BRC-definition}, one of the principal components of a Barrier Reverse Convertible is a down and in barrier option on a put. The first step of our approach is thus to price this component with a backward stochastic differential equation resolution. The methodology is the same as described in \ref{sec:summary} without the final adjustments made for coupons and callability, and without the credit default risk.\\
@@ -523,7 +526,7 @@ where :
     \item $y=\frac{\ln(\frac{B^{2}}{S_{0}K})}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
     \item $x_{1}=\frac{\ln(S_{0}/H)}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
     \item $y_{1}=\frac{\ln(H/S_{0})}{\sigma \sqrt{T}}+\lambda \sigma \sqrt{T}$
-    \item $\mathcal{N}(.)$ is the cumulative distribution function of a standard normal variable
+    \item $\mathcal{N}(\cdot)$ is the cumulative distribution function of a standard normal variable
 \end{itemize}
 
 The different down-in barrier options priced with our methodology are described in the following table :
@@ -639,11 +642,11 @@ BRC & Underlying & Volatility & Strike\tablefootnote{This is also the initial le
 3 & Swisscom & 17.168\% & 444.30 & 399.87 & 6.0\% p.a. & 1 year\\ % Content row 3
 \bottomrule % Bottom horizontal line
 \end{tabular}
-\caption{Description of the \textit{Barrier Reverse Convertibles} priced}
+\caption{Description of the Barrier Reverse Convertibles priced}
 \label{tab:uni-BRC-charachteristics}
 \end{table}
 
-We compare our result with the real market prices extracted from the UBS platform. We decided to pick the bid and the ask, which gives us a band of acceptable prices instead of a single value. Figure \ref{fig:results-BRC-pricing} sums up the results obtained on 100 simulations :
+We compare our result with the real market prices extracted from the UBS platform. We decided to pick the bid and the ask, which gives us a band of acceptable prices instead of a single value. Figure \ref{fig:results-BRC-pricing} sums up the results:
 
 \begin{figure}[H]
 \centering
@@ -653,10 +656,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on Swatch},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2,
+    xmin=0, xmax=10,
     ymin=97.25, ymax=98.50,
-    xtick={.5,1,1.5,2},
-    xticklabels={5000,10000,15000,20000},
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     ytick={97.25,97.50,97.75,98.0,98.25,98.50},
     legend pos=south east,
     ymajorgrids=true,
@@ -666,22 +669,22 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,97.31)(2,97.31)
+    (0,97.31)(10,97.31)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,98.31)(2,98.31)
+    (0,98.31)(10,98.31)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.25,97.98387)(.5,98.15167)(.75,98.21007)(1,98.24800)(2,98.28778913254116)
+    (.25,97.98387)(.5,98.15167)(.75,98.21007)(1,98.24800)(2,98.28778913254116)(2.5,98.431968)(3,98.451494)(3.5,98.452746)(5,98.363250)(7.5,98.358220)(10,98.343130)
     };
-    							
+    												
 \legend{Bid, Ask, Price}
 \end{axis}
             \end{tikzpicture}
@@ -693,10 +696,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on UBS},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2,
+    xmin=0, xmax=10,
     ymin=96.25, ymax=97.75,
-    xtick={.50,1.00,1.50,2.00},
-    xticklabels={5000,10000,15000,20000},
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     ytick={96.25,96.50,96.75,97.0,97.25,97.50,97.75,98.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -706,22 +709,22 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,96.37)(2.00,96.37)
+    (0,96.37)(10.00,96.37)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,97.37)(2.00,97.37)
+    (0,97.37)(10.00,97.37)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.10,97.4725301462994)(.25,97.51114)(.50,97.50031)(.75,97.49034)(1.00,97.49501)(2.00,97.483500)
+    (.25,97.20791)(.5,97.25249)(.75,97.38109)(1.0,97.49125)(2.00,97.596942)(2.5,97.630838)(3,97.645504)(5,97.577240)(7.5,97.56557)
     };
-  							  							
+  													  							
 \legend{Bid, Ask, Price}
 
 \end{axis}
@@ -734,10 +737,10 @@ We compare our result with the real market prices extracted from the UBS platfor
     title={BRC on Swisscom},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2,
+    xmin=0, xmax=10,
     ymin=98.25, ymax=100,
-    xtick={.50,1.00,1.50,2.00},
-    xticklabels={5000,10000,15000,20000},
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -747,23 +750,23 @@ We compare our result with the real market prices extracted from the UBS platfor
     color=blue,
     ]
     coordinates {
-    (0,98.68)(2.00,98.68)
+    (0,98.68)(10.00,98.68)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,99.68)(2.00,99.68)
+    (0,99.68)(10.00,99.68)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.25,98.79471)(.50,98.91070)(.75,98.94420)(1.00,98.95531)(2.00,98.978825)
+    (.25,98.70934)(.50,98.76605)(.75,98.79450)(1.00,98.83654)(2.00,98.876740)(2.5,98.881560)(3,98.915430)(3.5,98.946450)(4,98.965340)(4.5,98.978710)(5,98.981940)(7.5,99.0111100)(10,99.01083)
     };
 \legend{Bid, Ask, Price}
-				
+															
 \end{axis}
             \end{tikzpicture}
   \label{fig:sub2}
@@ -772,7 +775,7 @@ We compare our result with the real market prices extracted from the UBS platfor
 \label{fig:results-BRC-pricing}
 \end{figure}
 \newpage
-For the two first \textit{Barrier Reverse Convertibles}, the price seems to be slightly overestimated. This could be due to the fact that the maturity is longer than for the last one, thus accumulating more errors in the backward resolution. It is also worth noting that in the second case, the price converges very early ; this could be due to the fact that the product is always called because of a high coupon rate and early callable dates. Indeed, if there is a lot of coupons with a high rate expected after the last callable date, this will increase the expected future value of the product and encourage the issuer to call it.
+For the two first Barrier Reverse Convertibles, the price seems to be slightly overestimated. This could be due to the fact that the maturity is longer than for the last one, thus accumulating more errors in the backward resolution. %It is also worth noting that in the second case, the price converges very early ; this could be due to the fact that the product is always called because of a high coupon rate and early callable dates. Indeed, if there is a lot of coupons with a high rate expected after the last callable date, this will increase the expected future value of the product and encourage the issuer to call it.
 
 
 \section{Multi-dimensional callable BRCs}
@@ -800,7 +803,7 @@ BRC & Underlyings & Volatility & Strike\tablefootnote{This is also the initial l
   & Nikkei225 & 16.50\% & 19537.10 & 11722.260 & & \\ % Content row 1
 \bottomrule % Bottom horizontal line
 \end{tabular}
-\caption{Description of the multi-\textit{Barrier Reverse Convertibles} priced}
+\caption{Description of the multi-Barrier Reverse Convertibles priced}
 \label{tab:multi-BRC-charachteristics}
 \end{table}
 
@@ -824,7 +827,7 @@ Nikkei225 & & & & 1.0 \\ % Content row 1
 \label{tab:corr}
 \end{table}
 
-Again, we compare our results with the actual price extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the average absolute error obtained on 20 simulations :
+Again, we compare our results with the actual bid and ask prices extracted from the UBS platform. Figure \ref{fig:results-multi-BRC-pricing} sums up the results:
 
 \begin{figure}[H]
 \centering
@@ -833,22 +836,35 @@ Again, we compare our results with the actual price extracted from the UBS platf
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1.00,
-    ymin=0.5, ymax=1.2,
-    xtick={.25,.50,.75,1.00},
-    xticklabels={2500,5000,7500,10000},
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=97.0, ymax=98.75,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.12)(10.00,97.12)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.9)(10.00,97.9)
+    };
+\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.05,0.958509)(.10,0.905319)(.25,0.848922)(.50,0.837590)(.75,0.831052)(1.00,0.834020)
+    (.25,98.118750)(.5,98.222870)(.75,98.350130)(1.0,98.425353)(2.0,98.478750)(2.5,98.45757)(3,98.40819)(3.5,98.44820)(5,98.43820461)
     };
+    \legend{Bid, Ask, Price}								
 \end{axis}
 \end{tikzpicture}
   \label{fig:sub1}
@@ -858,22 +874,35 @@ Again, we compare our results with the actual price extracted from the UBS platf
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1.00,
-    ymin=0.5, ymax=1.5,
-    xtick={.25,.50,.75,1.00},
-    xticklabels={2500,5000,7500,10000},
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=101.5, ymax=103.5,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,101.61)(10.00,101.61)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,102.11)(10.00,102.11)
+    };
+\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.05,1.302299943)(.10,1.299651357)(.25,1.301240509)(.50,1.30124122)(.75,1.301594128)(1.00,1.301434168)
+    (.25,103.1411028)(.5,103.1517035)(.75,103.1552361)(1.0,103.1570022)(2.0,103.15965)(2.5,103.16018)(3,103.16053)
     };
+    \legend{Bid, Ask, Price} 						
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -882,22 +911,35 @@ Again, we compare our results with the actual price extracted from the UBS platf
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1.00,
-    ymin=0.5, ymax=1,
-    xtick={.25,.50,.75,1.00},
-    xticklabels={2500,5000,7500,10000},
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=98.5, ymax=100.0,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.57)(10.00,98.57)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.43)(10.00,99.43)
+    };
+\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.05,0.8086966708)(.10,0.8022905231)(.25,0.7458102771)(.50,0.749307644)(.75,0.7470657638)(1.00,0.7439713738)
+    (.25,99.59246987)(.5,99.60809215)(.75,99.58864458)(1.0,99.61014605)(2.0,99.683560)(2.5,99.679430)(3,99.701340)(3.5,99.722940)(4,99.710480)
     };
+     \legend{Bid, Ask, Price} 
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -905,6 +947,7 @@ Again, we compare our results with the actual price extracted from the UBS platf
 \label{fig:results-multi-BRC-pricing}
 \end{figure}
 
+\newpage
 The errors for multi-callable BRCs 1 and 3 seem to be relatively low and the convergence prices remain consistent with the market prices. A more interesting case is the multi-callable BRC 2, whose price seems to be constant no matter the number of simulations in the Monte Carlo methodology. It is worth noting that the price is almost the one of the coupon component of the asset (discounted and with the credit risk), which let us think that the put is barely activated during the lifetime of the product. Indeed, if we observe the barrier levels of this BRC, we can see that they are very low (less than 50 \% of the initial value for each underlying, although it is roughly 60\% for the other BRCs). As explained with the pricing of down-in barriers, it seems that the pricing methodology lacks accuracy when it comes to such corner cases : a very low price of the barrier component tends to be underestimated and pushed down to zero. This is even more aggravated by the fact that the coupon component then takes over and totally hides the effect of the barrier.
 
 \section{Conclusion on the results}
@@ -963,7 +1006,7 @@ This interpolation working only for a strictly monotonic set of points, we apply
 \subsection{Results}
 In order to have comparable results, we decided to price again the 6 BRCs presented in the previous sections. The only change is that we used a volatility term structure based on historical volatilities (provided by the Bloomberg platform) and interpolated the values needed for the diffusion of the underlyings and for the estimation of the conditional expectations with the Gregory-Delbourgo interpolation.\\
 
-Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pricing for the callable BRCs described in \ref{sec:callable-BRC}. Again, those results represent the mean on 100 simulations.
+Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pricing for the callable BRCs described in \ref{sec:callable-BRC}. 
 
 \begin{figure}[H]
 \centering
@@ -973,11 +1016,11 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on Swatch},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2.00,
-    ymin=97.25, ymax=98.50,
-    xtick={.50,1.00,1.50,2.00},
-    xticklabels={5000,10000,15000,20000},
-    ytick={97.25,97.50,97.75,98.0,98.25,98.50},
+    xmin=0, xmax=10.00,
+    ymin=96.75, ymax=98.50,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
+    ytick={96.75,97,97.25,97.50,97.75,98.0,98.25,98.50},
     legend pos=north east,
     ymajorgrids=true,
     grid style=dashed,
@@ -986,21 +1029,21 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,97.31)(2.00,97.31)
+    (0,97.31)(10.00,97.31)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,98.31)(2.00,98.31)
+    (0,98.31)(10.00,98.31)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.25,97.30292)(.50,97.46841)(.75,97.52690)(1.00,97.56498)(2.00,97.599087)
-    };
+    (.25,96.91363)(.50,97.19268)(.75,97.40514)(1.00,97.53649)(2.00,97.674000)(3,97.736250)(5,97.684733)
+    };					
 \legend{Bid, Ask, Price}
 \end{axis}
 \end{tikzpicture}
@@ -1012,10 +1055,10 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on UBS},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2.00,
+    xmin=0, xmax=10.00,
     ymin=96.25, ymax=99,
-    xtick={.50,1.00,1.50,2.00},
-    xticklabels={5000,10000,15000,20000},
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     ytick={96.50,97.0,97.50,98.0,98.5,99},
     legend pos=south east,
     ymajorgrids=true,
@@ -1025,22 +1068,21 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,96.37)(2.00,96.37)
+    (0,96.37)(10.00,96.37)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,97.37)(2.00,97.37)
+    (0,97.37)(10.00,97.37)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.10,98.6587530478919)(.25,98.68647)(.5,98.67670)(.75,98.66755)(1.00,98.67211)(2.00,98.660945)
+    (.25,98.429)(.5,98.433)(.75,98.562)(1.00,98.651)(2.00,98.7422)(5,98.564951)(7.5,98.58418535)(10,98.60384949)
     };
-   				 							
 \legend{Bid, Ask, Price}
 
 \end{axis}
@@ -1052,10 +1094,10 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     title={BRC on Swisscom},
     xlabel={Number of simulations},
     ylabel={Price (\%)},
-    xmin=0, xmax=2.00,
+    xmin=0, xmax=10.00,
     ymin=98.25, ymax=100,
-    xtick={.50,1.00,1.50,2.00},
-    xticklabels={5000,10000,15000,20000},
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     ytick={98.25,98.50,98.75,99.0,99.25,99.50,99.75,100.0},
     legend pos=south east,
     ymajorgrids=true,
@@ -1065,21 +1107,21 @@ Figure \ref{fig:results-BRC-pricing-Delbourgo} shows the results of the new pric
     color=blue,
     ]
     coordinates {
-    (0,98.68)(2.00,98.68)
+    (0,98.68)(10.00,98.68)
     };
 \addplot[
     color=red,
     ]
     coordinates {
-    (0,99.68)(2.00,99.68)
+    (0,99.68)(10.00,99.68)
     };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (.25,99.11909)(.50,99.22453)(.75,99.25563)(1.00,99.26520)(2.00,99.285241)
-    };
+    (.25,99.02642)(.50,99.08632)(.75,99.12554)(1.00,99.15415)(2.00,99.201360)(5.00,99.287253)(7.5,99.28632497052063)(10,99.2887884)
+    };					
 \legend{Bid, Ask, Price}
 				
 \end{axis}
@@ -1095,80 +1137,121 @@ This shows that the way we represent the volatility in our model is quite import
 
 On the contrary, let us notice that for the assets with shorter maturity (like the last one), the term-structure of the volatility does not imply much changes in the price. This seems consistent in the sense that volatility moves over the time have less influence in a short-term horizon.\\
 
-Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean on 20 simulations) of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
+Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results of the pricings of the multi-BRCs described in \ref{sec:multi-BRC-description}. 
 
 \begin{figure}[H]
 \centering
 \begin{minipage}[b]{0.6\textwidth}
-  \begin{tikzpicture}[scale=0.8]
+  \begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1,
-    ymin=0.5, ymax=1.2,
-    xtick={.25,.5,.75,1},
-    xticklabels={2500,5000,7500,10000},
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=97.0, ymax=98.75,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,97.12)(10.00,97.12)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,97.9)(10.00,97.9)
+    };
+\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (0.05,1.033743)(0.1,0.986679)(0.25,0.934055)(0.5,0.921570)(0.75,0.910942)(1,0.913366)
+    (.5,98.311044)(1.0,98.507231)(2.0,98.565235)(3.0,98.507119)(5.0,98.521713)(75.0,98.44991)(100.0,98.39018)
     };
+    \legend{Bid, Ask, Price}
+    						
 \end{axis}
 \end{tikzpicture}
   \label{fig:sub1}
 \end{minipage}%
 \begin{minipage}[b]{0.6\textwidth}
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50 and S\&P500},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1,
-    ymin=0.5, ymax=1.5,
-    xtick={.25,.5,.75,1},
-    xticklabels={2500,5000,7500,10000},
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=101.5, ymax=103.5,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
     legend pos=south east,
     ymajorgrids=true,
     grid style=dashed,
 ]
 \addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,101.61)(10.00,101.61)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,102.11)(10.00,102.11)
+    };
+\addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (0.05,1.297225801)(0.1,1.296571389)(0.25,1.300008522)(0.5,1.299987037)(0.75,1.300562321)(1,1.300693021)
+    (.5,103.1521)(1.0,103.1569)(2.0,103.1596)(3.0,103.1604)(5.0,103.1611)(75.0,103.1615)(100.0,103.1616)
     };
+    						
+    \legend{Bid, Ask, Price} 						
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
 \begin{minipage}[b]{0.5\textwidth}
-\begin{tikzpicture}[scale=0.8]
+\begin{tikzpicture}[scale=0.75]
 \begin{axis}[
     title={BRC on SMI, EuroStoxx50, S\&P500 and Nikkei225},
     xlabel={Number of simulations},
-    ylabel={Absolute error},
-    xmin=0, xmax=1,
-    ymin=0, ymax=0.5,
-    xtick={.25,.5,.75,1},
-    xticklabels={2500,5000,7500,10000},
-    legend pos=south east,
+    ylabel={Price (\%)},
+    xmin=0, xmax=10.00,
+    ymin=98.25, ymax=99.75,
+    xtick={1,5,10},
+    xticklabels={10000,50000,100000},
+    legend pos=north east,
     ymajorgrids=true,
     grid style=dashed,
 ]
+\addplot[
+    color=blue,
+    ]
+    coordinates {
+    (0,98.57)(10.00,98.57)
+    };
+\addplot[
+    color=red,
+    ]
+    coordinates {
+    (0,99.43)(10.00,99.43)
+    };
 \addplot[
     color=cyan,
     mark=o,
     ]
     coordinates {
-    (0.05,0.4649321346)(0.1,0.4267946956)(0.25,0.3862498482)(0.5,0.3679566489)(0.75,0.3676131956)(1,0.3731876314)
+    (.5,98.41049)(1.0,98.48714)(2.0,98.53243)(3.0,98.51124)(5.0,98.5433)(75.0,98.53293)(100.0,98.55739)
     };
+     \legend{Bid, Ask, Price} 
 \end{axis}
 \end{tikzpicture}
 \end{minipage}
@@ -1177,7 +1260,7 @@ Figure \ref{fig:results-multi-BRC-pricing-delourgo} presents the results (mean o
 \end{figure}
 
 \newpage
-Again, the results are slightly different from the ones without the volatility term structure. Indeed, for the first BRC, the absolute error has softly increased whereas it has diminished by half for the third BRC. However, the problem of the second BRC whose barrier was never touched has not been resolved since the price is still constant and reflects the bond price.\\
+Again, the results are slightly different from the ones without the volatility term structure. Indeed, for the first BRC, the price has softly increased whereas it has greatly diminished for the third BRC. However, the problem of the second BRC whose barrier was never touched has not been resolved since the price is still constant and reflects the bond price.\\
 
 Adding a term structure to the volatility has thus mitigated results. For some cases, it makes the pricing more accurate but it does not solve the default of precision present in corner cases (when the barrier is barely touched). However, considering the results on uni-dimensional BRCs, it seems obvious that a constant volatility is not enough to reproduce the real behavior of the volatility and that a more complex model is necessary for an accurate pricing. 
 
@@ -1250,7 +1333,7 @@ The price of a barrier option is thus less expensive than its vanilla counterpar
 
 \subsection{Pricing of continuous barrier options}
 Barrier options can be defined by their final expected payoff. Let us denote for example $V(S,t)$ the price of a down-and-out option on a call whose barrier level is $B$. We have : 
-$$V(S,0) = e^{-rT}\mathbb{E}((S_T-K)_+\mathbf{1}_{\left\{\underset{0 \leq t \leq T}{\min} S_t>B\right\}})$$
+$$V(S,0) = e^{-rT}\mathbb{E}\left((S_T-K)_+\mathbf{1}_{\left\{\underset{0 \leq t \leq T}{\min} S_t>B\right\}}\right)$$
 
 The price $V$ also satisfies the Black-Scholes pricing PDE :
 \begin{equation}
@@ -1272,20 +1355,20 @@ $$V(S,t)=C(S,t)-C(B^2,t)(\frac{S}{B})^{1-\frac{2r}{\sigma}}$$
 \label{appendix:brownian-bridge}
 Let $(S_t)_{0 \leq t \leq T}$ be a normal process, $B$, $t_i$ and $t_{i+1}$ real numbers such that $t_{i+1}-t_i>0$. We have : 
 \begin{equation}
-    \mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = e^{-2 \frac{(s_i-B)(s_{i+1}-B)}{\sigma^2(t_{i+1}-t_i)}}
+    \mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = \exp\left(-2 \frac{(s_i-B)(s_{i+1}-B)}{\sigma^2(t_{i+1}-t_i)}\right)
     \label{eq:brownian-bridge}
 \end{equation}
     
 \begin{proof}
 We know that :
-$$\mathcal{L}((S_t)_{t_i \leq t \leq t_{i+1}}|S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1})=\mathcal{L}((s_i+\sigma W_{t-t_i})_{t_i \leq t \leq t_{i+1}}|W_{t_{i+1}-t_i}=\frac{1}{\sigma_i}(s_{i+1}-s_i)})$$
+$$\mathcal{L}((S_t)_{t_i \leq t \leq t_{i+1}}|S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1})=\mathcal{L}((s_i+\sigma W_{t-t_i})_{t_i \leq t \leq t_{i+1}}|W_{t_{i+1}-t_i}=\frac{1}{\sigma_i}(s_{i+1}-s_i))$$
 where $(W_t)_{t_i \leq t \leq t_{i+1}}$ is a brownian motion.\\
 
 We thus have :
 $$\begin{aligned}
-(\ref{eq:brownian-bridge}) = & \mathbb{P}\left(\exists t \in [t_i,t_{i+1}],s_i+\sigma W_{t-t_i}>B~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right) \\
-= & \mathbb{P}\left(\exists t \in [t_i,t_{i+1}],W_{t-t_i}>\frac{B-s_i}{\sigma}~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right)\\
-= & \mathbb{P}\left(\underset{t \in [t_i,t_{i+1}]}{\max} W_{t-t_i}>\frac{B-s_i}{\sigma}~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right)
+(\ref{eq:brownian-bridge}) &=  \mathbb{P}\left(\exists t \in [t_i,t_{i+1}],s_i+\sigma W_{t-t_i}>B~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right) \\
+&=  \mathbb{P}\left(\exists t \in [t_i,t_{i+1}],W_{t-t_i}>\frac{B-s_i}{\sigma}~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right)\\
+&=  \mathbb{P}\left(\underset{t \in [t_i,t_{i+1}]}{\max} W_{t-t_i}>\frac{B-s_i}{\sigma}~\bigg\vert~W_{t_{i+1}-t_i}=\frac{s_{i+1}-s_i}{\sigma}\right)
 \end{aligned}$$
 
 Let us note $u=t-t_i$ and $T=t_{i+1}-t_{i}$.
@@ -1300,13 +1383,13 @@ $$\begin{aligned}
 
 Here, $a=\frac{B-s_i}{\sigma}$, $b=\frac{B-s_{i+1}}{\sigma}$, so :
 $$\begin{aligned}
-\mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = e^{\frac{-2(s_i-B)(s_{i+1}-B)}{\sigma^2 T}}
+\mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = \exp\left(\frac{-2(s_i-B)(s_{i+1}-B)}{\sigma^2 T}\right)
 \end{aligned}$$
 \end{proof}
 
 Note that in our case, $(S_t)_{0 \leq t \leq T}$ being a log-normal process, this formula becomes :
 $$\begin{aligned}
-\mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = \exp^{\frac{-2\log{\frac{s_i}{B}}\log{\frac{s_{i+1}}{B}}}{\sigma^2 T}}
+\mathbb{P}(\exists t \in [t_i,t_{i+1}],S_t>B~|~S_{t_i}=s_i,S_{t_{i+1}}=s_{i+1}) = \exp\left(\frac{-2\log{\frac{s_i}{B}}\log{\frac{s_{i+1}}{B}}}{\sigma^2 T}\right)
 \end{aligned}$$
 
 \endgroup
